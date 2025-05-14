@@ -2,6 +2,7 @@ import CourseNavigation from "./Navigation";
 import Modules from "./Modules";
 import Home from "./Home";
 import Assignments from "./Assignments";
+import AssignmentEditor from "./Assignments/Editor";
 
 import { Navigate, Route, Routes } from "react-router";
 
@@ -23,10 +24,7 @@ export default function Courses() {
               <Route path="Piazza" element={<h2>Piazza</h2>} />
               <Route path="Zoom" element={<h2>Zoom</h2>} />
               <Route path="Assignments" element={<Assignments />} />
-              <Route
-                path="Assignments/:aid"
-                element={<h2>Assignment Editor</h2>}
-              />
+              <Route path="Assignments/:aid" element={<AssignmentEditor />} />
               <Route path="Quizzes" element={<h2>Quizzes</h2>} />
               <Route path="Grades" element={<h2>Grades</h2>} />
             </Routes>
