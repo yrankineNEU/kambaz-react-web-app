@@ -103,20 +103,20 @@ export default function AssignmentEditor() {
           </td>
         </tr>
         <tr>
-          <td>
+          <td align="right" valign="top">
             <label htmlFor="wd-due-date"> Due </label>
             <input type="date" value="2025-05-13" id="wd-due-date" />
             <br />
           </td>
         </tr>
         <tr>
-          <td>
+          <td align="right" valign="top">
             <label htmlFor="wd-available-from"> Available From </label>
             <input type="date" value="2025-05-06" id="wd-available-from" />
           </td>
         </tr>
         <tr>
-          <td>
+          <td align="right" valign="top">
             <label htmlFor="wd-available-until"> Available Until </label>
             <input type="date" value="2025-05-20" id="wd-available-until" />
             <br />
