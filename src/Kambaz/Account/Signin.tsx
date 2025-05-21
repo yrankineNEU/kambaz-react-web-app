@@ -1,4 +1,4 @@
-import { FormSelect, Form, Col, Row, Button, Container } from "react-bootstrap";
+import { Form, Col, Row, Button, Container } from "react-bootstrap";
 import { Link } from "react-router";
 
 export default function Signin() {
