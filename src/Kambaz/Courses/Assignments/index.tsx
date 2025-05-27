@@ -5,10 +5,15 @@ import ModuleControlButtons from "../Modules/ModuleControlButtons";
 import AssignmentControls from "./AssignmentControls";
 import GreenEditButton from "./GreenEditButton";
 import { Link } from "react-router";
+import { useParams } from "react-router";
+import * as db from "../../Database";
 
 export default function Assignments() {
+  const { cid } = useParams();
+  const assignments = db.assignments;
+
   return (
-    <div id="wd-assignments">
+    <div>
       <AssignmentControls />
       <br />
       <br />
@@ -21,76 +26,36 @@ export default function Assignments() {
             <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
-            <ListGroup.Item className="wd-lesson p-3 ps-1">
-              <BsGripVertical className="me-2 fs-3" />
-              <GreenEditButton />
-              <div>
-                <div className="fw-bold">
-                  <Link
-                    to="/Kambaz/Courses/1234/Assignments/123"
-                    id="wd-assignments-link"
-                    className="list-group-item border-0"
-                  >
-                    A1
-                  </Link>
-                </div>
-                <div className="text-danger small">
-                  Multiple Modules
-                  <span className="text-body ms-1">
-                    | Not available until May 6 at 12:00am | Due May 13 at
-                    11:59pm | 100 points
-                  </span>
-                </div>
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson p-3 ps-1">
-              <BsGripVertical className="me-2 fs-3" />
-              <GreenEditButton />
-              <div>
-                <div className="fw-bold">
-                  {" "}
-                  <Link
-                    to="/Kambaz/Courses/1234/Assignments/123"
-                    id="wd-assignments-link"
-                    className="list-group-item border-0"
-                  >
-                    A2
-                  </Link>
-                </div>
-                <div className="text-danger small">
-                  Multiple Modules
-                  <span className="text-body ms-1">
-                    | Not available until May 10 at 12:00am | Due May 17 at
-                    11:59pm | 100 points
-                  </span>
-                </div>
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson p-3 ps-1">
-              <BsGripVertical className="me-2 fs-3" />
-              <GreenEditButton />
-              <div>
-                <div className="fw-bold">
-                  <Link
-                    to="/Kambaz/Courses/1234/Assignments/123"
-                    id="wd-assignments-link"
-                    className="list-group-item border-0"
-                  >
-                    A3
-                  </Link>
-                </div>
-                <div className="text-danger small">
-                  Multiple Modules
-                  <span className="text-body ms-1">
-                    | Not available until May 20 at 12:00am | Due May 27 at
-                    11:59pm | 100 points
-                  </span>
-                </div>
-              </div>{" "}
-              <LessonControlButtons />
-            </ListGroup.Item>
+            {assignments
+              .filter((assignment: any) => assignment.course == cid)
+              .map((assignment: any) => (
+                <ListGroup.Item
+                  key={assignment._id}
+                  className="wd-lesson p-3 ps-1"
+                >
+                  <BsGripVertical className="me-2 fs-3" />
+                  <GreenEditButton />
+                  <div>
+                    <div className="fw-bold">
+                      <Link
+                        to={`/Kambaz/Courses/${cid}/Assignments/${assignment._id}`}
+                        id="wd-assignments-link"
+                        className="list-group-item border-0"
+                      >
+                        {assignment.title}
+                      </Link>
+                    </div>
+                    <div className="text-danger small">
+                      Multiple Modules
+                      <span className="text-body ms-1">
+                        | Not available until {assignment.AvailableDate} | Due
+                        {assignment.DueDate} | {assignment.points}
+                      </span>
+                    </div>
+                  </div>
+                  <LessonControlButtons />
+                </ListGroup.Item>
+              ))}
           </ListGroup>
         </ListGroup.Item>
       </ListGroup>

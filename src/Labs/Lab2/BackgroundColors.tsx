@@ -8,9 +8,6 @@ export default function BackgroundColors() {
           the background of this text is green and the foreground white
         </span>
       </p>
-      <div class="red">
-        <h1 id="white">Hello</h1>
-      </div>
     </div>
   );
 }
