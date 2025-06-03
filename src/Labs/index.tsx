@@ -7,7 +7,7 @@ import Lab4 from "./Lab4";
 
 export default function Labs() {
   return (
-    <div>
+    <div className="container-fluid">
       <h1>Landing Page</h1>
       <p>Yana Rankine</p>
       <p>Summer 2025 - Section 41980</p>
