@@ -12,12 +12,14 @@ export default function TodoItem({
   return (
     <ListGroup.Item key={todo.id}>
       <Button onClick={() => deleteTodo(todo.id)} id="wd-delete-todo-click">
-        Delete
+        {" "}
+        Delete{" "}
       </Button>
       <Button onClick={() => setTodo(todo)} id="wd-set-todo-click">
-        Edit
+        {" "}
+        Edit{" "}
       </Button>
-      {todo.title}
+      {todo.title}{" "}
     </ListGroup.Item>
   );
 }

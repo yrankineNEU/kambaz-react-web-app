@@ -1,4 +1,3 @@
-import { courses } from "../Database";
 import CourseNavigation from "./Navigation";
 import Modules from "./Modules";
 import Home from "./Home";
@@ -9,7 +8,7 @@ import PeopleTable from "./People/Table";
 
 import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 
-export default function Courses() {
+export default function Courses({ courses }: { courses: any[] }) {
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
   const { pathname } = useLocation();
