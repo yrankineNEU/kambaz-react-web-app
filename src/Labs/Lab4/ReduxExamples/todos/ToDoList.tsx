@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ListGroup, Button, FormControl } from "react-bootstrap";
 export default function TodoList() {
   const [todos, setTodos] = useState([

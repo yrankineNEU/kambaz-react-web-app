@@ -31,7 +31,6 @@ import Add from "./Add";
 import Square from "./Square";
 import Highlight from "./Highlight";
 import PathParameters from "./PathParameters";
-import { useSelector } from "react-redux";
 
 export default function Lab3() {
   return (
