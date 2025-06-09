@@ -1,6 +1,12 @@
 import { Button, Col, Container, Form, FormSelect, Row } from "react-bootstrap";
+import { Link, useParams } from "react-router";
+import * as db from "../../Database";
 
 export default function AssignmentEditor() {
+  const { cid, aid } = useParams();
+  const assignment = db.assignments.find((a) => a._id === aid);
+  if (!assignment) return <p>Assignment not found.</p>;
+
   return (
     <Container fluid>
       <h3>Assignment Editor</h3>
@@ -10,21 +16,12 @@ export default function AssignmentEditor() {
             Assignment Name
           </Form.Label>
           <Col xs={8}>
-            <Form.Control type="email" placeholder="A1" />
+            <Form.Control type="text" defaultValue={assignment.title} />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
           <Col xs={10}>
-            <Form.Control
-              as="textarea"
-              style={{ height: "100px" }}
-              placeholder="The assignment is available online Submit a link to the landing page of
-        your web application running on Netlify. The landing page should inclde
-        the following: Your full name and section Links to each of the lab
-        assignments Link to the Kanbas application Links to all relevant source
-        code repositories The Kanbas application should include a link to
-        navigate back to the landing page."
-            />
+            <Form.Control as="textarea" defaultValue={assignment.description} />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -32,7 +29,7 @@ export default function AssignmentEditor() {
             Points
           </Form.Label>
           <Col xs={8}>
-            <Form.Control type="number" placeholder="100" />
+            <Form.Control type="number" defaultValue={assignment.points} />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -94,7 +91,7 @@ export default function AssignmentEditor() {
               <Col sm={{ span: 10 }}>
                 <Form.Group controlId="dueDate">
                   <Form.Label className="fw-bold pt-3">Due</Form.Label>
-                  <Form.Control type="date" />
+                  <Form.Control type="date" defaultValue={assignment.DueDate} />
                 </Form.Group>
               </Col>
               <Col xs={{ span: 5 }}>
@@ -102,13 +99,16 @@ export default function AssignmentEditor() {
                   <Form.Label className="fw-bold pt-3">
                     Available from
                   </Form.Label>
-                  <Form.Control type="date" />
+                  <Form.Control
+                    type="date"
+                    defaultValue={assignment.AvailableDate}
+                  />
                 </Form.Group>
               </Col>
               <Col xs={{ span: 5 }}>
                 <Form.Group controlId="availableUntil">
                   <Form.Label className="fw-bold pt-3">Until</Form.Label>
-                  <Form.Control type="date" />
+                  <Form.Control type="date" defaultValue={assignment.DueDate} />
                 </Form.Group>
               </Col>
             </Col>
@@ -116,22 +116,16 @@ export default function AssignmentEditor() {
         </div>
       </Form>
       <hr />
-      <Button
-        variant="danger"
-        size="lg"
-        className="me-1 float-end"
-        id="wd-save-btn"
-      >
-        Save
-      </Button>
-      <Button
-        variant="secondary"
-        size="lg"
-        className="me-1 float-end"
-        id="wd-cancel-btn"
-      >
-        Cancel
-      </Button>
+      <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
+        <Button variant="danger" size="lg" className="me-1 float-end">
+          Save
+        </Button>
+      </Link>
+      <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
+        <Button variant="secondary" size="lg" className="me-1 float-end">
+          Cancel
+        </Button>
+      </Link>
     </Container>
   );
 }

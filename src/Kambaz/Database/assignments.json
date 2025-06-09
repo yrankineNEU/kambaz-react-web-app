@@ -2,6 +2,7 @@
   {
     "_id": "A101",
     "title": "Propulsion Assignment",
+    "description": "This is an assignment description for propulsion.",
     "course": "RS101",
     "AvailableDate": "May 6 at 12:00am",
     "DueDate": "May 13 at 11:59pm",
@@ -10,6 +11,7 @@
   {
     "_id": "A102",
     "title": "Combustion Analysis",
+    "description": "This is an assignment description for combustion.",
     "course": "RS101",
     "AvailableDate": "May 13 at 12:00am",
     "DueDate": "May 20 at 11:59pm",
@@ -18,6 +20,7 @@
   {
     "_id": "A103",
     "title": "Nozzle Design Project",
+    "description": "This is an assignment description for nozzle design.",
     "course": "RS101",
     "AvailableDate": "May 20 at 12:00am",
     "DueDate": "May 27 at 11:59pm",
@@ -26,6 +29,7 @@
   {
     "_id": "A201",
     "title": "Aerodynamics Quiz",
+    "description": "This is an assignment description for aerodynamics.",
     "course": "RS102",
     "AvailableDate": "May 6 at 12:00am",
     "DueDate": "May 13 at 11:59pm",
@@ -34,6 +38,7 @@
   {
     "_id": "A202",
     "title": "Flow Analysis",
+    "description": "This is an assignment description for flow analysis.",
     "course": "RS102",
     "AvailableDate": "May 13 at 12:00am",
     "DueDate": "May 20 at 11:59pm",
@@ -42,6 +47,7 @@
   {
     "_id": "A203",
     "title": "Heating Analysis",
+    "description": "This is an assignment description for heating analysis.",
     "course": "RS102",
     "AvailableDate": "May 20 at 12:00am",
     "DueDate": "May 27 at 11:59pm",
@@ -50,6 +56,7 @@
   {
     "_id": "A301",
     "title": "Structural Design Task",
+    "description": "This is an assignment description for structural.",
     "course": "RS103",
     "AvailableDate": "May 6 at 12:00am",
     "DueDate": "May 13 at 11:59pm",
@@ -58,6 +65,7 @@
   {
     "_id": "A302",
     "title": "Orbital Calculations",
+    "description": "This is an assignment description for oribtal.",
     "course": "RS103",
     "AvailableDate": "May 13 at 12:00am",
     "DueDate": "May 20 at 11:59pm",
@@ -66,6 +74,7 @@
   {
     "_id": "A303",
     "title": "Systems Engineering Exam",
+    "description": "This is an assignment description for this exam.",
     "course": "RS103",
     "AvailableDate": "May 20 at 12:00am",
     "DueDate": "May 27 at 11:59pm",
