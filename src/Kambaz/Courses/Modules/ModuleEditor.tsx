@@ -29,8 +29,7 @@ export default function ModuleEditor({
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
-          {" "}
-          Cancel{" "}
+          Cancel
         </Button>
         <Button
           variant="primary"
@@ -39,8 +38,7 @@ export default function ModuleEditor({
             handleClose();
           }}
         >
-          {" "}
-          Add Module{" "}
+          Add Module
         </Button>
       </Modal.Footer>
     </Modal>

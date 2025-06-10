@@ -1,131 +1,164 @@
+import React, { useState, useEffect } from "react";
 import { Button, Col, Container, Form, FormSelect, Row } from "react-bootstrap";
-import { Link, useParams } from "react-router";
-import * as db from "../../Database";
+import { useParams, useNavigate } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
+import { updateAssignment, addAssignment } from "./reducer";
 
 export default function AssignmentEditor() {
-  const { cid, aid } = useParams();
-  const assignment = db.assignments.find((a) => a._id === aid);
-  if (!assignment) return <p>Assignment not found.</p>;
+  const { cid, aid } = useParams<{ cid: string; aid?: string }>();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Get assignments from Redux store
+  const assignments = useSelector(
+    (state: any) => state.assignments.assignments
+  );
+
+  // Find the assignment to edit (if aid present)
+  const existingAssignment = aid
+    ? assignments.find((a: any) => a._id === aid)
+    : null;
+
+  // Local state for form fields
+  const [name, setName] = useState(existingAssignment?.name || "");
+  const [description, setDescription] = useState(
+    existingAssignment?.description || ""
+  );
+  const [points, setPoints] = useState(existingAssignment?.points || 0);
+  const [availableDate, setAvailableDate] = useState(
+    existingAssignment?.AvailableDate || ""
+  );
+  const [dueDate, setDueDate] = useState(existingAssignment?.DueDate || "");
+
+  // Save handler
+  function handleSave() {
+    if (aid && existingAssignment) {
+      // Update existing
+      dispatch(
+        updateAssignment({
+          ...existingAssignment,
+          name,
+          description,
+          points,
+          AvailableDate: availableDate,
+          DueDate: dueDate,
+        })
+      );
+    } else {
+      // Add new assignment
+      dispatch(
+        addAssignment({
+          title: name,
+          description,
+          points,
+          course: cid,
+          AvailableDate: availableDate,
+          DueDate: dueDate,
+        })
+      );
+    }
+    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  }
+
+  // Cancel handler
+  function handleCancel() {
+    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  }
+
+  if (aid && !existingAssignment) {
+    return <p>Assignment not found.</p>;
+  }
 
   return (
     <Container fluid>
-      <h3>Assignment Editor</h3>
+      <h3>{aid ? "Edit Assignment" : "New Assignment"}</h3>
       <Form>
-        <Form.Group as={Row} className="mb-3">
+        <Form.Group as={Row} className="mb-3" controlId="assignmentName">
           <Form.Label column sm={2}>
             Assignment Name
           </Form.Label>
           <Col xs={8}>
-            <Form.Control type="text" defaultValue={assignment.title} />
+            <Form.Control
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter assignment name"
+            />
           </Col>
         </Form.Group>
-        <Form.Group as={Row} className="mb-3">
+
+        <Form.Group as={Row} className="mb-3" controlId="assignmentDescription">
           <Col xs={10}>
-            <Form.Control as="textarea" defaultValue={assignment.description} />
+            <Form.Control
+              as="textarea"
+              rows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter description"
+            />
           </Col>
         </Form.Group>
-        <Form.Group as={Row} className="mb-3">
+
+        <Form.Group as={Row} className="mb-3" controlId="assignmentPoints">
           <Form.Label column sm={2} className="text-end">
             Points
           </Form.Label>
           <Col xs={8}>
-            <Form.Control type="number" defaultValue={assignment.points} />
+            <Form.Control
+              type="number"
+              value={points}
+              onChange={(e) => setPoints(Number(e.target.value))}
+              min={0}
+            />
           </Col>
         </Form.Group>
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm={2} className="text-end">
-            Assignment Group
-          </Form.Label>
-          <Col xs={8}>
-            <FormSelect>
-              <option selected>ASSIGNMENTS</option>
-              <option value="1">QUIZZES</option>
-              <option value="2">EXAMS</option>
-            </FormSelect>
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm={2} className="text-end">
-            Display Grade As
-          </Form.Label>
-          <Col xs={8}>
-            <FormSelect>
-              <option selected>Percentage</option>
-              <option value="1">Decmial</option>
-              <option value="2">Letter</option>
-            </FormSelect>
-          </Col>
-        </Form.Group>
-        <div id="wd-editor-submission-type">
-          <Form.Group as={Row}>
-            <Form.Label column sm={2} className="text-end">
-              Submission Type
-            </Form.Label>
-            <Col xs={8} className="border border-secondary rounded p-2 mb-3">
-              <FormSelect>
-                <option selected>Online</option>
-                <option value="1">In-Person</option>
-              </FormSelect>
-              <Form.Label column sm={6} className="fw-bold">
-                Online Entry Options
-              </Form.Label>
-              <Col sm={{ span: 10 }}>
-                <Form.Check label="Text Entry" />
-                <Form.Check label="Website URL" />
-                <Form.Check label="Media Recording" />
-                <Form.Check label="Student Annotation" />
-                <Form.Check label="File Uploads" />
-              </Col>
-            </Col>
-          </Form.Group>
-        </div>
-        <div id="wd-editor-assign">
-          <Form.Group as={Row}>
-            <Form.Label column sm={2} className="text-end">
-              Assign
-            </Form.Label>
-            <Col xs={8} className="border border-secondary rounded p-2 mb-3">
-              <Form.Label className="fw-bold pt-3">Assign to</Form.Label>
 
-              <Form.Control type="email" placeholder="Everyone" />
-              <Col sm={{ span: 10 }}>
-                <Form.Group controlId="dueDate">
-                  <Form.Label className="fw-bold pt-3">Due</Form.Label>
-                  <Form.Control type="date" defaultValue={assignment.DueDate} />
-                </Form.Group>
-              </Col>
-              <Col xs={{ span: 5 }}>
-                <Form.Group controlId="availableFrom">
-                  <Form.Label className="fw-bold pt-3">
-                    Available from
-                  </Form.Label>
-                  <Form.Control
-                    type="date"
-                    defaultValue={assignment.AvailableDate}
-                  />
-                </Form.Group>
-              </Col>
-              <Col xs={{ span: 5 }}>
-                <Form.Group controlId="availableUntil">
-                  <Form.Label className="fw-bold pt-3">Until</Form.Label>
-                  <Form.Control type="date" defaultValue={assignment.DueDate} />
-                </Form.Group>
-              </Col>
-            </Col>
-          </Form.Group>
-        </div>
-      </Form>
-      <hr />
-      <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
-        <Button variant="danger" size="lg" className="me-1 float-end">
+        <Form.Group as={Row} className="mb-3" controlId="availableDate">
+          <Form.Label column sm={2} className="text-end">
+            Available Date
+          </Form.Label>
+          <Col xs={8}>
+            <Form.Control
+              type="date"
+              value={availableDate}
+              onChange={(e) => setAvailableDate(e.target.value)}
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3" controlId="dueDate">
+          <Form.Label column sm={2} className="text-end">
+            Due Date
+          </Form.Label>
+          <Col xs={8}>
+            <Form.Control
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+          </Col>
+        </Form.Group>
+
+        <hr />
+
+        <Button
+          variant="primary"
+          size="lg"
+          className="me-2 float-end"
+          onClick={handleSave}
+        >
           Save
         </Button>
-      </Link>
-      <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
-        <Button variant="secondary" size="lg" className="me-1 float-end">
+
+        <Button
+          variant="secondary"
+          size="lg"
+          className="float-end"
+          onClick={handleCancel}
+        >
           Cancel
         </Button>
-      </Link>
+      </Form>
     </Container>
   );
 }

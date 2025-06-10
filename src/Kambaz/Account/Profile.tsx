@@ -74,9 +74,9 @@ export default function Profile() {
             className="form-control mb-2"
             id="wd-role"
           >
-            <option value="USER">User</option>{" "}
+            <option value="USER">User</option>
             <option value="ADMIN">Admin</option>
-            <option value="FACULTY">Faculty</option>{" "}
+            <option value="FACULTY">Faculty</option>
             <option value="STUDENT">Student</option>
           </select>
           <Button onClick={signout} className="w-100 mb-2" id="wd-signout-btn">
