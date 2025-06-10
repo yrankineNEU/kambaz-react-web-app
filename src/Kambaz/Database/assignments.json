@@ -6,6 +6,7 @@
     "course": "RS101",
     "AvailableDate": "May 6 at 12:00am",
     "DueDate": "May 13 at 11:59pm",
+    "UntilDate": "May 25 at 11:59pm",
     "points": "100 pts"
   },
   {
@@ -15,6 +16,7 @@
     "course": "RS101",
     "AvailableDate": "May 13 at 12:00am",
     "DueDate": "May 20 at 11:59pm",
+    "UntilDate": "May 25 at 11:59pm",
     "points": "100 pts"
   },
   {
@@ -24,6 +26,7 @@
     "course": "RS101",
     "AvailableDate": "May 20 at 12:00am",
     "DueDate": "May 27 at 11:59pm",
+    "UntilDate": "May 25 at 11:59pm",
     "points": "100 pts"
   },
   {
@@ -33,6 +36,7 @@
     "course": "RS102",
     "AvailableDate": "May 6 at 12:00am",
     "DueDate": "May 13 at 11:59pm",
+    "UntilDate": "May 25 at 11:59pm",
     "points": "100 pts"
   },
   {
@@ -42,6 +46,7 @@
     "course": "RS102",
     "AvailableDate": "May 13 at 12:00am",
     "DueDate": "May 20 at 11:59pm",
+    "UntilDate": "May 25 at 11:59pm",
     "points": "100 pts"
   },
   {
@@ -51,6 +56,7 @@
     "course": "RS102",
     "AvailableDate": "May 20 at 12:00am",
     "DueDate": "May 27 at 11:59pm",
+    "UntilDate": "May 25 at 11:59pm",
     "points": "100 pts"
   },
   {
@@ -60,6 +66,7 @@
     "course": "RS103",
     "AvailableDate": "May 6 at 12:00am",
     "DueDate": "May 13 at 11:59pm",
+    "UntilDate": "May 25 at 11:59pm",
     "points": "100 pts"
   },
   {
@@ -69,6 +76,7 @@
     "course": "RS103",
     "AvailableDate": "May 13 at 12:00am",
     "DueDate": "May 20 at 11:59pm",
+    "UntilDate": "May 25 at 11:59pm",
     "points": "100 pts"
   },
   {
@@ -78,6 +86,7 @@
     "course": "RS103",
     "AvailableDate": "May 20 at 12:00am",
     "DueDate": "May 27 at 11:59pm",
+    "UntilDate": "May 25 at 11:59pm",
     "points": "100 pts"
   }
 ]

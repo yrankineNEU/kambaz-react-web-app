@@ -1,11 +1,36 @@
 import { Button, Col, Container, Form, FormSelect, Row } from "react-bootstrap";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import * as db from "../../Database";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addAssignment } from "./reducer";
 
 export default function AssignmentEditor() {
-  const { cid, aid } = useParams();
-  const assignment = db.assignments.find((a) => a._id === aid);
-  if (!assignment) return <p>Assignment not found.</p>;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { cid } = useParams(); // Get course ID from URL
+
+  const [assignment, setAssignment] = useState({
+    title: "",
+    description: "",
+    points: 100,
+    DueDate: "",
+    AvailableDate: "",
+    UntilDate: "",
+    course: cid,
+  });
+
+  const handleSave = () => {
+    // Dispatch the addAssignment action
+    dispatch(addAssignment(assignment));
+    // Navigate back to assignments
+    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  };
+
+  const handleCancel = () => {
+    // Navigate back without saving
+    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  };
 
   return (
     <Container fluid>
