@@ -17,9 +17,9 @@ const assignmentsSlice = createSlice({
         course: assignment.course,
         description: assignment.description,
         points: assignment.points,
-        dueDate: assignment.dueDate,
-        availableDate: assignment.availableDate,
-        untilDate: assignment.untilDate,
+        DueDate: assignment.DueDate,
+        AvailableDate: assignment.AvailableDate,
+        UntilDate: assignment.UntilDate,
       };
       state.assignments = [...state.assignments, newAssignment] as any;
     },

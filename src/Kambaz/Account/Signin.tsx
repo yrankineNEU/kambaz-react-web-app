@@ -16,6 +16,7 @@ export default function Signin() {
   const [credentials, setCredentials] = useState<any>({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const signin = () => {
     const user = db.users.find(
       (u: any) =>
@@ -34,7 +35,7 @@ export default function Signin() {
         <Form.Group as={Row} className="mb-3">
           <Col>
             <FormControl
-              defaultValue={credentials.username}
+              value={credentials.username || ""} // ← Fixed: Use value instead of defaultValue
               onChange={(e) =>
                 setCredentials({ ...credentials, username: e.target.value })
               }
@@ -47,7 +48,7 @@ export default function Signin() {
         <Form.Group as={Row} className="mb-3">
           <Col>
             <FormControl
-              defaultValue={credentials.password}
+              value={credentials.password || ""} // ← Fixed: Use value instead of defaultValue
               onChange={(e) =>
                 setCredentials({ ...credentials, password: e.target.value })
               }
@@ -59,13 +60,11 @@ export default function Signin() {
           </Col>
         </Form.Group>
       </Form>
-
       <Link to="/Kambaz/Dashboard" id="wd-signin-btn">
         <Button onClick={signin} id="wd-signin-btn" className="w-100">
           Sign in
         </Button>
       </Link>
-
       <div>
         <Link
           to="/Kambaz/Account/Signup"

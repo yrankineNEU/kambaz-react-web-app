@@ -1,13 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addAssignment } from "./reducer";
+import { useDispatch, useSelector } from "react-redux";
+import { addAssignment, updateAssignment } from "./reducer";
 import { Form, Button, Container, Row, Col, FormSelect } from "react-bootstrap";
 
 export default function AssignmentEditor() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { cid } = useParams(); // Get course ID from URL
+  const { cid, aid } = useParams(); // Get course ID and assignment ID from URL
+
+  // Get assignments from Redux store
+  const assignments = useSelector(
+    (state: any) => state.assignmentsReducer.assignments
+  );
+
+  // Debug logging
+  console.log("URL params - cid:", cid, "aid:", aid);
+  console.log("All assignments:", assignments);
+
+  // Determine if we're editing an existing assignment
+  const isEditing = Boolean(aid) && aid !== "Editor";
+  const existingAssignment = isEditing
+    ? assignments.find((a: any) => a._id === aid)
+    : null;
+
+  console.log("isEditing:", isEditing);
+  console.log("existingAssignment:", existingAssignment);
 
   const [assignment, setAssignment] = useState({
     title: "",
@@ -19,6 +37,24 @@ export default function AssignmentEditor() {
     course: cid,
   });
 
+  // Load existing assignment data when editing
+  useEffect(() => {
+    if (isEditing && existingAssignment) {
+      setAssignment({
+        title: existingAssignment.title || "",
+        description: existingAssignment.description || "",
+        points:
+          typeof existingAssignment.points === "string"
+            ? parseInt(existingAssignment.points) || 100
+            : existingAssignment.points || 100,
+        DueDate: existingAssignment.DueDate || "",
+        AvailableDate: existingAssignment.AvailableDate || "",
+        UntilDate: existingAssignment.UntilDate || "",
+        course: cid,
+      });
+    }
+  }, [isEditing, existingAssignment, cid]);
+
   const handleSave = () => {
     // Make sure we have all required fields
     if (!assignment.title.trim()) {
@@ -26,8 +62,21 @@ export default function AssignmentEditor() {
       return;
     }
 
-    // Dispatch the addAssignment action
-    dispatch(addAssignment(assignment));
+    console.log("handleSave - isEditing:", isEditing);
+    console.log("handleSave - assignment:", assignment);
+    console.log("handleSave - aid:", aid);
+
+    if (isEditing) {
+      // Update existing assignment
+      const updatePayload = { ...assignment, _id: aid };
+      console.log("Dispatching updateAssignment with:", updatePayload);
+      dispatch(updateAssignment(updatePayload));
+    } else {
+      // Create new assignment
+      console.log("Dispatching addAssignment with:", assignment);
+      dispatch(addAssignment(assignment));
+    }
+
     // Navigate back to assignments
     navigate(`/Kambaz/Courses/${cid}/Assignments`);
   };
@@ -39,7 +88,7 @@ export default function AssignmentEditor() {
 
   return (
     <Container fluid>
-      <h3>Assignment Editor</h3>
+      <h3>{isEditing ? "Edit Assignment" : "New Assignment"}</h3>
       <Form>
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={2}>
@@ -48,7 +97,7 @@ export default function AssignmentEditor() {
           <Col xs={8}>
             <Form.Control
               type="text"
-              defaultValue={assignment.title}
+              value={assignment.title}
               onChange={(e) =>
                 setAssignment({ ...assignment, title: e.target.value })
               }
@@ -59,7 +108,7 @@ export default function AssignmentEditor() {
           <Col xs={10}>
             <Form.Control
               as="textarea"
-              defaultValue={assignment.description}
+              value={assignment.description}
               onChange={(e) =>
                 setAssignment({ ...assignment, description: e.target.value })
               }
@@ -73,7 +122,7 @@ export default function AssignmentEditor() {
           <Col xs={8}>
             <Form.Control
               type="number"
-              defaultValue={assignment.points}
+              value={assignment.points}
               onChange={(e) =>
                 setAssignment({
                   ...assignment,
@@ -102,7 +151,7 @@ export default function AssignmentEditor() {
           <Col xs={8}>
             <FormSelect>
               <option selected>Percentage</option>
-              <option value="1">Decmial</option>
+              <option value="1">Decimal</option>
               <option value="2">Letter</option>
             </FormSelect>
           </Col>
@@ -144,7 +193,7 @@ export default function AssignmentEditor() {
                   <Form.Label className="fw-bold pt-3">Due</Form.Label>
                   <Form.Control
                     type="date"
-                    defaultValue={assignment.DueDate}
+                    value={assignment.DueDate}
                     onChange={(e) =>
                       setAssignment({ ...assignment, DueDate: e.target.value })
                     }
@@ -158,7 +207,7 @@ export default function AssignmentEditor() {
                   </Form.Label>
                   <Form.Control
                     type="date"
-                    defaultValue={assignment.AvailableDate}
+                    value={assignment.AvailableDate}
                     onChange={(e) =>
                       setAssignment({
                         ...assignment,
@@ -173,7 +222,7 @@ export default function AssignmentEditor() {
                   <Form.Label className="fw-bold pt-3">Until</Form.Label>
                   <Form.Control
                     type="date"
-                    defaultValue={assignment.UntilDate}
+                    value={assignment.UntilDate}
                     onChange={(e) =>
                       setAssignment({
                         ...assignment,
@@ -195,7 +244,7 @@ export default function AssignmentEditor() {
           className="me-1 float-end"
           onClick={handleSave}
         >
-          Save
+          {isEditing ? "Update" : "Save"}
         </Button>
       </Link>
       <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
