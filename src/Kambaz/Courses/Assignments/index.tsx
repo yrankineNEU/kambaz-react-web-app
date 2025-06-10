@@ -1,14 +1,16 @@
 import { ListGroup } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
-import LessonControlButtons from "../Modules/LessonControlButtons";
 import AssignmentControls from "./AssignmentControls";
 import GreenEditButton from "./GreenEditButton";
 import { Link } from "react-router";
 import { useParams } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import AssignmentEditButtons from "./AssignmentEditButtons";
+import { deleteAssignment } from "./reducer";
 
 export default function Assignments() {
   const { cid } = useParams();
+  const dispatch = useDispatch();
 
   // Get assignments from Redux store instead of db
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
@@ -48,12 +50,17 @@ export default function Assignments() {
                     <div className="text-danger small">
                       Multiple Modules
                       <span className="text-body ms-1">
-                        | Not available until {assignment.availableDate} | Due{" "}
-                        {assignment.dueDate} | {assignment.points} pts
+                        | Not available until {assignment.AvailableDate} | Due:
+                        {assignment.DueDate} | {assignment.points}
                       </span>
                     </div>
                   </div>
-                  <LessonControlButtons />
+                  <AssignmentEditButtons
+                    assignmentId={assignment._id}
+                    deleteAssignment={(assignmentId) => {
+                      dispatch(deleteAssignment(assignmentId));
+                    }}
+                  />
                 </ListGroup.Item>
               ))}
           </ListGroup>

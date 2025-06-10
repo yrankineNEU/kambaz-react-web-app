@@ -14,12 +14,49 @@ export default function AssignmentEditor() {
     (state: any) => state.assignmentsReducer.assignments
   );
 
+  // Helper function to convert "May 13 at 12:00am" to "YYYY-MM-DD"
+  const convertToDateInput = (dateString: string): string => {
+    if (!dateString) return "";
+
+    try {
+      // Parse the date string like "May 13 at 12:00am"
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "";
+
+      // Convert to YYYY-MM-DD format
+      return date.toISOString().split("T")[0];
+    } catch (error) {
+      console.log("Error converting date:", dateString, error);
+      return "";
+    }
+  };
+
+  // Helper function to convert "YYYY-MM-DD" back to readable format
+  const convertFromDateInput = (dateString: string): string => {
+    if (!dateString) return "";
+
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "";
+
+      // Convert to format like "May 13 at 12:00am"
+      const options: Intl.DateTimeFormatOptions = {
+        month: "short",
+        day: "numeric",
+      };
+      return date.toLocaleDateString("en-US", options) + " at 11:59pm";
+    } catch (error) {
+      console.log("Error converting from date input:", dateString, error);
+      return dateString;
+    }
+  };
+
   // Debug logging
   console.log("URL params - cid:", cid, "aid:", aid);
   console.log("All assignments:", assignments);
 
   // Determine if we're editing an existing assignment
-  const isEditing = Boolean(aid) && aid !== "Editor";
+  const isEditing = Boolean(aid) && aid !== "new" && aid !== "Editor";
   const existingAssignment = isEditing
     ? assignments.find((a: any) => a._id === aid)
     : null;
@@ -40,6 +77,7 @@ export default function AssignmentEditor() {
   // Load existing assignment data when editing
   useEffect(() => {
     if (isEditing && existingAssignment) {
+      console.log("Loading existing assignment:", existingAssignment);
       setAssignment({
         title: existingAssignment.title || "",
         description: existingAssignment.description || "",
@@ -47,13 +85,26 @@ export default function AssignmentEditor() {
           typeof existingAssignment.points === "string"
             ? parseInt(existingAssignment.points) || 100
             : existingAssignment.points || 100,
-        DueDate: existingAssignment.DueDate || "",
-        AvailableDate: existingAssignment.AvailableDate || "",
-        UntilDate: existingAssignment.UntilDate || "",
+        DueDate: convertToDateInput(existingAssignment.DueDate || ""),
+        AvailableDate: convertToDateInput(
+          existingAssignment.AvailableDate || ""
+        ),
+        UntilDate: convertToDateInput(existingAssignment.UntilDate || ""),
+        course: cid,
+      });
+    } else if (!isEditing) {
+      // Reset form for new assignment
+      setAssignment({
+        title: "",
+        description: "",
+        points: 100,
+        DueDate: "",
+        AvailableDate: "",
+        UntilDate: "",
         course: cid,
       });
     }
-  }, [isEditing, existingAssignment, cid]);
+  }, [isEditing, existingAssignment, cid, aid]); // Added aid to dependencies
 
   const handleSave = () => {
     // Make sure we have all required fields
@@ -67,14 +118,26 @@ export default function AssignmentEditor() {
     console.log("handleSave - aid:", aid);
 
     if (isEditing) {
-      // Update existing assignment
-      const updatePayload = { ...assignment, _id: aid };
+      // Update existing assignment - convert dates back to readable format
+      const updatePayload = {
+        ...assignment,
+        _id: aid,
+        DueDate: convertFromDateInput(assignment.DueDate),
+        AvailableDate: convertFromDateInput(assignment.AvailableDate),
+        UntilDate: convertFromDateInput(assignment.UntilDate),
+      };
       console.log("Dispatching updateAssignment with:", updatePayload);
       dispatch(updateAssignment(updatePayload));
     } else {
-      // Create new assignment
-      console.log("Dispatching addAssignment with:", assignment);
-      dispatch(addAssignment(assignment));
+      // Create new assignment - convert dates to readable format
+      const newAssignment = {
+        ...assignment,
+        DueDate: convertFromDateInput(assignment.DueDate),
+        AvailableDate: convertFromDateInput(assignment.AvailableDate),
+        UntilDate: convertFromDateInput(assignment.UntilDate),
+      };
+      console.log("Dispatching addAssignment with:", newAssignment);
+      dispatch(addAssignment(newAssignment));
     }
 
     // Navigate back to assignments
@@ -104,6 +167,7 @@ export default function AssignmentEditor() {
             />
           </Col>
         </Form.Group>
+
         <Form.Group as={Row} className="mb-3">
           <Col xs={10}>
             <Form.Control
@@ -115,6 +179,7 @@ export default function AssignmentEditor() {
             />
           </Col>
         </Form.Group>
+
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={2} className="text-end">
             Points
@@ -132,6 +197,7 @@ export default function AssignmentEditor() {
             />
           </Col>
         </Form.Group>
+
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={2} className="text-end">
             Assignment Group
@@ -144,6 +210,7 @@ export default function AssignmentEditor() {
             </FormSelect>
           </Col>
         </Form.Group>
+
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={2} className="text-end">
             Display Grade As
@@ -156,6 +223,7 @@ export default function AssignmentEditor() {
             </FormSelect>
           </Col>
         </Form.Group>
+
         <div id="wd-editor-submission-type">
           <Form.Group as={Row}>
             <Form.Label column sm={2} className="text-end">
@@ -179,6 +247,7 @@ export default function AssignmentEditor() {
             </Col>
           </Form.Group>
         </div>
+
         <div id="wd-editor-assign">
           <Form.Group as={Row}>
             <Form.Label column sm={2} className="text-end">
@@ -186,7 +255,6 @@ export default function AssignmentEditor() {
             </Form.Label>
             <Col xs={8} className="border border-secondary rounded p-2 mb-3">
               <Form.Label className="fw-bold pt-3">Assign to</Form.Label>
-
               <Form.Control type="email" placeholder="Everyone" />
               <Col sm={{ span: 10 }}>
                 <Form.Group controlId="dueDate">
@@ -236,27 +304,27 @@ export default function AssignmentEditor() {
           </Form.Group>
         </div>
       </Form>
+
       <hr />
-      <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
-        <Button
-          variant="danger"
-          size="lg"
-          className="me-1 float-end"
-          onClick={handleSave}
-        >
-          {isEditing ? "Update" : "Save"}
-        </Button>
-      </Link>
-      <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
-        <Button
-          variant="secondary"
-          size="lg"
-          className="me-1 float-end"
-          onClick={handleCancel}
-        >
-          Cancel
-        </Button>
-      </Link>
+
+      {/* Fixed: Removed Link wrappers and just use buttons with onClick */}
+      <Button
+        variant="danger"
+        size="lg"
+        className="me-1 float-end"
+        onClick={handleSave}
+      >
+        {isEditing ? "Update" : "Save"}
+      </Button>
+
+      <Button
+        variant="secondary"
+        size="lg"
+        className="me-1 float-end"
+        onClick={handleCancel}
+      >
+        Cancel
+      </Button>
     </Container>
   );
 }
