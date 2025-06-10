@@ -5,11 +5,13 @@ import AssignmentControls from "./AssignmentControls";
 import GreenEditButton from "./GreenEditButton";
 import { Link } from "react-router";
 import { useParams } from "react-router";
-import * as db from "../../Database";
+import { useSelector } from "react-redux";
 
 export default function Assignments() {
   const { cid } = useParams();
-  const assignments = db.assignments;
+
+  // Get assignments from Redux store instead of db
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
 
   return (
     <div>
@@ -18,14 +20,14 @@ export default function Assignments() {
       <br />
       <br />
       <br />
-      <ListGroup className="rounded-0" id="wd-modules">
-        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
+      <ListGroup className="rounded-0" id="wd-assignments">
+        <ListGroup.Item className="wd-assignment p-0 mb-5 fs-5 border-gray">
           <div className="wd-title p-3 ps-2 bg-secondary">
             <BsGripVertical className="me-2 fs-3" /> ASSIGNMENTS
           </div>
           <ListGroup className="wd-lessons rounded-0">
             {assignments
-              .filter((assignment: any) => assignment.course == cid)
+              .filter((assignment: any) => assignment.course === cid)
               .map((assignment: any) => (
                 <ListGroup.Item
                   key={assignment._id}
@@ -46,8 +48,8 @@ export default function Assignments() {
                     <div className="text-danger small">
                       Multiple Modules
                       <span className="text-body ms-1">
-                        | Not available until {assignment.AvailableDate} | Due
-                        {assignment.DueDate} | {assignment.points}
+                        | Not available until {assignment.availableDate} | Due{" "}
+                        {assignment.dueDate} | {assignment.points} pts
                       </span>
                     </div>
                   </div>

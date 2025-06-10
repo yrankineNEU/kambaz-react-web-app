@@ -1,9 +1,8 @@
-import { Button, Col, Container, Form, FormSelect, Row } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router";
-import * as db from "../../Database";
 import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addAssignment } from "./reducer";
+import { Form, Button, Container, Row, Col, FormSelect } from "react-bootstrap";
 
 export default function AssignmentEditor() {
   const navigate = useNavigate();
@@ -21,6 +20,12 @@ export default function AssignmentEditor() {
   });
 
   const handleSave = () => {
+    // Make sure we have all required fields
+    if (!assignment.title.trim()) {
+      alert("Please enter an assignment title");
+      return;
+    }
+
     // Dispatch the addAssignment action
     dispatch(addAssignment(assignment));
     // Navigate back to assignments
@@ -41,12 +46,24 @@ export default function AssignmentEditor() {
             Assignment Name
           </Form.Label>
           <Col xs={8}>
-            <Form.Control type="text" defaultValue={assignment.title} />
+            <Form.Control
+              type="text"
+              defaultValue={assignment.title}
+              onChange={(e) =>
+                setAssignment({ ...assignment, title: e.target.value })
+              }
+            />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
           <Col xs={10}>
-            <Form.Control as="textarea" defaultValue={assignment.description} />
+            <Form.Control
+              as="textarea"
+              defaultValue={assignment.description}
+              onChange={(e) =>
+                setAssignment({ ...assignment, description: e.target.value })
+              }
+            />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -54,7 +71,16 @@ export default function AssignmentEditor() {
             Points
           </Form.Label>
           <Col xs={8}>
-            <Form.Control type="number" defaultValue={assignment.points} />
+            <Form.Control
+              type="number"
+              defaultValue={assignment.points}
+              onChange={(e) =>
+                setAssignment({
+                  ...assignment,
+                  points: parseInt(e.target.value) || 0,
+                })
+              }
+            />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -116,7 +142,13 @@ export default function AssignmentEditor() {
               <Col sm={{ span: 10 }}>
                 <Form.Group controlId="dueDate">
                   <Form.Label className="fw-bold pt-3">Due</Form.Label>
-                  <Form.Control type="date" defaultValue={assignment.DueDate} />
+                  <Form.Control
+                    type="date"
+                    defaultValue={assignment.DueDate}
+                    onChange={(e) =>
+                      setAssignment({ ...assignment, DueDate: e.target.value })
+                    }
+                  />
                 </Form.Group>
               </Col>
               <Col xs={{ span: 5 }}>
@@ -127,13 +159,28 @@ export default function AssignmentEditor() {
                   <Form.Control
                     type="date"
                     defaultValue={assignment.AvailableDate}
+                    onChange={(e) =>
+                      setAssignment({
+                        ...assignment,
+                        AvailableDate: e.target.value,
+                      })
+                    }
                   />
                 </Form.Group>
               </Col>
               <Col xs={{ span: 5 }}>
                 <Form.Group controlId="availableUntil">
                   <Form.Label className="fw-bold pt-3">Until</Form.Label>
-                  <Form.Control type="date" defaultValue={assignment.DueDate} />
+                  <Form.Control
+                    type="date"
+                    defaultValue={assignment.UntilDate}
+                    onChange={(e) =>
+                      setAssignment({
+                        ...assignment,
+                        UntilDate: e.target.value,
+                      })
+                    }
+                  />
                 </Form.Group>
               </Col>
             </Col>
@@ -142,12 +189,22 @@ export default function AssignmentEditor() {
       </Form>
       <hr />
       <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
-        <Button variant="danger" size="lg" className="me-1 float-end">
+        <Button
+          variant="danger"
+          size="lg"
+          className="me-1 float-end"
+          onClick={handleSave}
+        >
           Save
         </Button>
       </Link>
       <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
-        <Button variant="secondary" size="lg" className="me-1 float-end">
+        <Button
+          variant="secondary"
+          size="lg"
+          className="me-1 float-end"
+          onClick={handleCancel}
+        >
           Cancel
         </Button>
       </Link>
