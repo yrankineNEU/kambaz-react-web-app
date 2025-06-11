@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { setCurrentUser } from "./reducer";
 import { useDispatch } from "react-redux";
-import * as db from "../Database";
+import * as db from "../../../kambaz-node-server-app/Kambaz/Database";
 
 export default function Signin() {
   const [credentials, setCredentials] = useState<any>({});
