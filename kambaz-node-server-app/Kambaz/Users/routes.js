@@ -52,7 +52,10 @@ export default function UserRoutes(app) {
 
   const findCoursesForEnrolledUser = (req, res) => {
     let { userId } = req.params;
-    if (userId === "current") {
+
+    // For /api/users/current/courses, there's no userId param, so it's undefined
+    // For /api/users/:userId/courses, userId will be the actual ID or "current"
+    if (!userId || userId === "current") {
       const currentUser = req.session["currentUser"];
       if (!currentUser) {
         res.sendStatus(401);
@@ -60,6 +63,7 @@ export default function UserRoutes(app) {
       }
       userId = currentUser._id;
     }
+
     const courses = courseDao.findCoursesForEnrolledUser(userId);
     res.json(courses);
   };
@@ -69,7 +73,21 @@ export default function UserRoutes(app) {
     enrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
     res.json(newCourse);
   };
+  const testSession = (req, res) => {
+    console.log("Session test - session data:", req.session);
+    console.log("Current user in session:", req.session["currentUser"]);
+    res.json({
+      hasSession: !!req.session,
+      hasCurrentUser: !!req.session["currentUser"],
+      sessionId: req.session.id,
+      currentUser: req.session["currentUser"],
+    });
+  };
+
+  // Add this route at the bottom with your other routes
+  app.get("/api/test-session", testSession);
   app.post("/api/users/current/courses", createCourse);
+  app.get("/api/users/current/courses", findCoursesForEnrolledUser);
   app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
   app.post("/api/users", createUser);
   app.get("/api/users", findAllUsers);

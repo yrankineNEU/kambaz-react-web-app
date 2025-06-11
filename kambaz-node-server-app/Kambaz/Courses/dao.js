@@ -26,11 +26,23 @@ export function findAllCourses() {
 }
 export function findCoursesForEnrolledUser(userId) {
   const { courses, enrollments } = Database;
+
+  console.log("findCoursesForEnrolledUser called with userId:", userId);
+  console.log("Total courses:", courses.length);
+  console.log("Total enrollments:", enrollments.length);
+  console.log(
+    "Enrollments for user:",
+    enrollments.filter((e) => e.user === userId)
+  );
+
   const enrolledCourses = courses.filter((course) =>
     enrollments.some(
       (enrollment) =>
         enrollment.user === userId && enrollment.course === course._id
     )
   );
+
+  console.log("Enrolled courses found:", enrolledCourses);
   return enrolledCourses;
 }
+// delete this log statement
