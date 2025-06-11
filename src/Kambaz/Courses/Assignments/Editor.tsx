@@ -131,15 +131,27 @@ export default function AssignmentEditor() {
           newAssignment
         );
 
+        // Make sure we have the complete assignment object with server ID
+        const completeAssignment = {
+          ...newAssignment,
+          _id: createdAssignment._id || createdAssignment.id,
+          ...createdAssignment,
+        };
+
         // Add to Redux store with the server-generated ID
-        dispatch(addAssignment(createdAssignment));
+        dispatch(addAssignment(completeAssignment));
       }
 
       // Navigate back to assignments
       navigate(`/Kambaz/Courses/${cid}/Assignments`);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving assignment:", error);
-      alert("Failed to save assignment. Please try again.");
+      // More detailed error message
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to save assignment";
+      alert(`Error: ${errorMessage}`);
     }
   };
 

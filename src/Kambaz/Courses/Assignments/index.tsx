@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { ListGroup } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,37 +12,48 @@ import { addAssignment, deleteAssignment } from "./reducer";
 export default function Assignments() {
   const { cid } = useParams();
   const dispatch = useDispatch();
-  const [hasLoadedFromServer, setHasLoadedFromServer] = useState(false);
+  const isMountedRef = useRef(true);
 
   // Get assignments from Redux store
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
 
-  // Fetch assignments from server when component mounts
+  // Fetch assignments from server when component mounts or course changes
   useEffect(() => {
+    isMountedRef.current = true;
+
     const fetchAssignments = async () => {
       try {
-        if (cid && !hasLoadedFromServer) {
-          const serverAssignments = await client.findAssignmentsForCourse(cid);
+        if (!cid) return;
 
-          // Clear existing assignments for this course first to avoid duplicates
-          const otherCourseAssignments = assignments.filter(
-            (a: any) => a.course !== cid
-          );
+        const serverAssignments = await client.findAssignmentsForCourse(cid);
 
-          // Add each assignment from server to Redux
-          serverAssignments.forEach((assignment: any) => {
-            dispatch(addAssignment(assignment));
-          });
+        // Only proceed if component is still mounted
+        if (!isMountedRef.current) return;
 
-          setHasLoadedFromServer(true);
-        }
+        // First, remove all existing assignments for this course from Redux
+        const currentCourseAssignments = assignments.filter(
+          (a: any) => a.course === cid
+        );
+        currentCourseAssignments.forEach((a: any) => {
+          dispatch(deleteAssignment(a._id));
+        });
+
+        // Then add fresh assignments from server
+        serverAssignments.forEach((assignment: any) => {
+          dispatch(addAssignment(assignment));
+        });
       } catch (error) {
         console.error("Error fetching assignments:", error);
       }
     };
 
     fetchAssignments();
-  }, [cid]); // Remove other dependencies to avoid re-fetching
+
+    // Cleanup function
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [cid]); // Only re-fetch when course ID changes
 
   const handleDeleteAssignment = async (assignmentId: string) => {
     try {

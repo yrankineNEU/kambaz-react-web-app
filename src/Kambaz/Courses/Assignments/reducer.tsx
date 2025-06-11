@@ -10,7 +10,7 @@ const assignmentsSlice = createSlice({
   reducers: {
     addAssignment: (state, { payload: assignment }) => {
       const newAssignment: any = {
-        _id: uuidv4(),
+        _id: assignment._id || uuidv4(), // Use server ID if it exists
         title: assignment.title,
         course: assignment.course,
         description: assignment.description,
