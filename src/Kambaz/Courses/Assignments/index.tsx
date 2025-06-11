@@ -1,19 +1,61 @@
+import { useEffect, useState } from "react";
 import { ListGroup } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
-import AssignmentControls from "./AssignmentControls";
-import GreenEditButton from "./GreenEditButton";
-import { Link } from "react-router";
-import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router";
+import AssignmentControls from "./AssignmentControls";
 import AssignmentEditButtons from "./AssignmentEditButtons";
-import { deleteAssignment } from "./reducer";
+import * as client from "./client";
+import GreenEditButton from "./GreenEditButton";
+import { addAssignment, deleteAssignment } from "./reducer";
 
 export default function Assignments() {
   const { cid } = useParams();
   const dispatch = useDispatch();
+  const [hasLoadedFromServer, setHasLoadedFromServer] = useState(false);
 
-  // Get assignments from Redux store instead of db
+  // Get assignments from Redux store
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+
+  // Fetch assignments from server when component mounts
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      try {
+        if (cid && !hasLoadedFromServer) {
+          const serverAssignments = await client.findAssignmentsForCourse(cid);
+
+          // Clear existing assignments for this course first to avoid duplicates
+          const otherCourseAssignments = assignments.filter(
+            (a: any) => a.course !== cid
+          );
+
+          // Add each assignment from server to Redux
+          serverAssignments.forEach((assignment: any) => {
+            dispatch(addAssignment(assignment));
+          });
+
+          setHasLoadedFromServer(true);
+        }
+      } catch (error) {
+        console.error("Error fetching assignments:", error);
+      }
+    };
+
+    fetchAssignments();
+  }, [cid]); // Remove other dependencies to avoid re-fetching
+
+  const handleDeleteAssignment = async (assignmentId: string) => {
+    try {
+      // Delete from server
+      await client.deleteAssignment(assignmentId);
+
+      // Delete from Redux store
+      dispatch(deleteAssignment(assignmentId));
+    } catch (error) {
+      console.error("Error deleting assignment:", error);
+      alert("Failed to delete assignment. Please try again.");
+    }
+  };
 
   return (
     <div>
@@ -50,16 +92,14 @@ export default function Assignments() {
                     <div className="text-danger small">
                       Multiple Modules
                       <span className="text-body ms-1">
-                        | Not available until {assignment.AvailableDate} | Due:
-                        {assignment.DueDate} | {assignment.points}
+                        | Not available until {assignment.AvailableDate} | Due:{" "}
+                        {assignment.DueDate} | {assignment.points} pts
                       </span>
                     </div>
                   </div>
                   <AssignmentEditButtons
                     assignmentId={assignment._id}
-                    deleteAssignment={(assignmentId) => {
-                      dispatch(deleteAssignment(assignmentId));
-                    }}
+                    deleteAssignment={handleDeleteAssignment}
                   />
                 </ListGroup.Item>
               ))}

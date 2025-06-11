@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Button, Col, Container, Form, FormSelect, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import * as client from "./client";
 import { addAssignment, updateAssignment } from "./reducer";
 
 export default function AssignmentEditor() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { cid, aid } = useParams(); // Get course ID and assignment ID from URL
+  const { cid, aid } = useParams();
 
   // Get assignments from Redux store
   const assignments = useSelector(
@@ -19,14 +20,10 @@ export default function AssignmentEditor() {
     if (!dateString) return "";
 
     try {
-      // Parse the date string like "May 13 at 12:00am"
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return "";
-
-      // Convert to YYYY-MM-DD format
       return date.toISOString().split("T")[0];
     } catch (error) {
-      console.log("Error converting date:", dateString, error);
       return "";
     }
   };
@@ -39,30 +36,21 @@ export default function AssignmentEditor() {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return "";
 
-      // Convert to format like "May 13 at 12:00am"
       const options: Intl.DateTimeFormatOptions = {
         month: "short",
         day: "numeric",
       };
       return date.toLocaleDateString("en-US", options) + " at 11:59pm";
     } catch (error) {
-      console.log("Error converting from date input:", dateString, error);
       return dateString;
     }
   };
-
-  // Debug logging
-  console.log("URL params - cid:", cid, "aid:", aid);
-  console.log("All assignments:", assignments);
 
   // Determine if we're editing an existing assignment
   const isEditing = Boolean(aid) && aid !== "new" && aid !== "Editor";
   const existingAssignment = isEditing
     ? assignments.find((a: any) => a._id === aid)
     : null;
-
-  console.log("isEditing:", isEditing);
-  console.log("existingAssignment:", existingAssignment);
 
   const [assignment, setAssignment] = useState({
     title: "",
@@ -77,7 +65,6 @@ export default function AssignmentEditor() {
   // Load existing assignment data when editing
   useEffect(() => {
     if (isEditing && existingAssignment) {
-      console.log("Loading existing assignment:", existingAssignment);
       setAssignment({
         title: existingAssignment.title || "",
         description: existingAssignment.description || "",
@@ -104,48 +91,59 @@ export default function AssignmentEditor() {
         course: cid,
       });
     }
-  }, [isEditing, existingAssignment, cid, aid]); // Added aid to dependencies
+  }, [isEditing, existingAssignment, cid, aid]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Make sure we have all required fields
     if (!assignment.title.trim()) {
       alert("Please enter an assignment title");
       return;
     }
 
-    console.log("handleSave - isEditing:", isEditing);
-    console.log("handleSave - assignment:", assignment);
-    console.log("handleSave - aid:", aid);
+    try {
+      if (isEditing && aid) {
+        // Update existing assignment - convert dates back to readable format
+        const updatePayload = {
+          ...assignment,
+          _id: aid,
+          DueDate: convertFromDateInput(assignment.DueDate),
+          AvailableDate: convertFromDateInput(assignment.AvailableDate),
+          UntilDate: convertFromDateInput(assignment.UntilDate),
+        };
 
-    if (isEditing) {
-      // Update existing assignment - convert dates back to readable format
-      const updatePayload = {
-        ...assignment,
-        _id: aid,
-        DueDate: convertFromDateInput(assignment.DueDate),
-        AvailableDate: convertFromDateInput(assignment.AvailableDate),
-        UntilDate: convertFromDateInput(assignment.UntilDate),
-      };
-      console.log("Dispatching updateAssignment with:", updatePayload);
-      dispatch(updateAssignment(updatePayload));
-    } else {
-      // Create new assignment - convert dates to readable format
-      const newAssignment = {
-        ...assignment,
-        DueDate: convertFromDateInput(assignment.DueDate),
-        AvailableDate: convertFromDateInput(assignment.AvailableDate),
-        UntilDate: convertFromDateInput(assignment.UntilDate),
-      };
-      console.log("Dispatching addAssignment with:", newAssignment);
-      dispatch(addAssignment(newAssignment));
+        // Update on server
+        await client.updateAssignment(updatePayload);
+
+        // Update in Redux store
+        dispatch(updateAssignment(updatePayload));
+      } else {
+        // Create new assignment - convert dates to readable format
+        const newAssignment = {
+          ...assignment,
+          DueDate: convertFromDateInput(assignment.DueDate),
+          AvailableDate: convertFromDateInput(assignment.AvailableDate),
+          UntilDate: convertFromDateInput(assignment.UntilDate),
+        };
+
+        // Create on server - this returns the assignment with server-generated ID
+        const createdAssignment = await client.createAssignmentForCourse(
+          cid!,
+          newAssignment
+        );
+
+        // Add to Redux store with the server-generated ID
+        dispatch(addAssignment(createdAssignment));
+      }
+
+      // Navigate back to assignments
+      navigate(`/Kambaz/Courses/${cid}/Assignments`);
+    } catch (error) {
+      console.error("Error saving assignment:", error);
+      alert("Failed to save assignment. Please try again.");
     }
-
-    // Navigate back to assignments
-    navigate(`/Kambaz/Courses/${cid}/Assignments`);
   };
 
   const handleCancel = () => {
-    // Navigate back without saving
     navigate(`/Kambaz/Courses/${cid}/Assignments`);
   };
 
@@ -307,7 +305,6 @@ export default function AssignmentEditor() {
 
       <hr />
 
-      {/* Fixed: Removed Link wrappers and just use buttons with onClick */}
       <Button
         variant="danger"
         size="lg"
