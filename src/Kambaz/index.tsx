@@ -13,17 +13,29 @@ import "./styles.css";
 export default function Kambaz() {
   const [courses, setCourses] = useState<any[]>([]);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+
   const fetchCourses = async () => {
+    if (!currentUser) {
+      console.log("No current user, skipping course fetch");
+      return;
+    }
+
     try {
+      console.log("Fetching courses for user:", currentUser);
       const courses = await userClient.findMyCourses();
+      console.log("Received courses:", courses);
       setCourses(courses);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching courses:", error);
     }
   };
+
   useEffect(() => {
     fetchCourses();
   }, [currentUser]);
+
+  console.log("Current user:", currentUser);
+  console.log("Courses:", courses);
 
   return (
     <Session>
