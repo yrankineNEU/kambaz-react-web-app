@@ -9,6 +9,12 @@ const assignmentsSlice = createSlice({
   initialState,
   reducers: {
     addAssignment: (state, { payload: assignment }) => {
+      // check for duplicates
+      const exists = state.assignments.some(
+        (a: any) => a._id === assignment._id
+      );
+      if (exists) return;
+
       const newAssignment: any = {
         _id: assignment._id || uuidv4(), // Use server ID if it exists
         title: assignment.title,
