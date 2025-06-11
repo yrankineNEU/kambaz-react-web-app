@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Button, Col, Container, Form, FormSelect, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { addAssignment, updateAssignment } from "./reducer";
-import { Form, Button, Container, Row, Col, FormSelect } from "react-bootstrap";
 
 export default function AssignmentEditor() {
   const navigate = useNavigate();

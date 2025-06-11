@@ -1,11 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-//import { assignments } from "../../../../kambaz-node-server-app/Kambaz/Database";
 import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  assignments: assignments,
+  assignments: [],
 };
-
 const assignmentsSlice = createSlice({
   name: "assignments",
   initialState,

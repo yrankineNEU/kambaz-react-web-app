@@ -1,13 +1,9 @@
-import { Row, Col, Card, Button, FormControl } from "react-bootstrap";
-import * as db from "../../kambaz-node-server-app/Kambaz/Database";
-import { v4 as uuidv4 } from "uuid";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useState } from "react";
+import { Button, Card, Col, FormControl, Row } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
-export default function Dashboard() {
-  // Local state for courses and current course being edited
-  const [courses, setCourses] = useState<any[]>(db.courses);
+export default function Dashboard({ courses }: { courses: any[] }) {
   const [course, setCourse] = useState<any>({
     _id: "0",
     name: "New Course",
@@ -18,51 +14,12 @@ export default function Dashboard() {
     description: "New Description",
   });
 
-  // Get current user and enrollments
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const { enrollments } = db;
   const isFaculty = currentUser?.role === "FACULTY";
 
-  // Course management functions
-  const addNewCourse = () => {
-    const newCourse = { ...course, _id: uuidv4() };
-    setCourses([...courses, newCourse]);
-  };
-
-  const updateCourse = () => {
-    setCourses(
-      courses.map((c) => {
-        if (c._id === course._id) {
-          return course;
-        } else {
-          return c;
-        }
-      })
-    );
-  };
-
-  const deleteCourse = (courseId: string) => {
-    setCourses(courses.filter((c) => c._id !== courseId));
-  };
-
-  // Filter courses based on user role
-  const getDisplayedCourses = () => {
-    if (isFaculty) {
-      // Faculty see all courses
-      return courses;
-    } else {
-      // Students see only enrolled courses
-      return courses.filter((course) =>
-        enrollments.some(
-          (enrollment) =>
-            enrollment.user === currentUser._id &&
-            enrollment.course === course._id
-        )
-      );
-    }
-  };
-
-  const displayedCourses = getDisplayedCourses();
+  const addNewCourse = () => {};
+  const updateCourse = () => {};
+  const deleteCourse = () => {};
 
   return (
     <div id="wd-dashboard">
@@ -104,13 +61,12 @@ export default function Dashboard() {
         </>
       )}
       <h2 id="wd-dashboard-published">
-        {isFaculty ? "All Courses" : "Enrolled Courses"} (
-        {displayedCourses.length})
+        {isFaculty ? "All Courses" : "Enrolled Courses"} ({courses.length})
       </h2>
       <hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {displayedCourses.map((courseItem) => (
+          {courses.map((courseItem) => (
             <Col
               key={courseItem._id}
               className="wd-dashboard-course"
@@ -144,7 +100,7 @@ export default function Dashboard() {
                         <button
                           onClick={(event) => {
                             event.preventDefault();
-                            deleteCourse(courseItem._id);
+                            deleteCourse();
                           }}
                           className="btn btn-danger float-end"
                           id="wd-delete-course-click"

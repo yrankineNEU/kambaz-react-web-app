@@ -1,43 +1,44 @@
-import { Form, Col, Row, Button, Container } from "react-bootstrap";
-import { Link } from "react-router";
-
+import { useState } from "react";
+import { FormControl } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import * as client from "./client";
+import { setCurrentUser } from "./reducer";
 export default function Signup() {
+  const [user, setUser] = useState<any>({});
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const signup = async () => {
+    const currentUser = await client.signup(user);
+    dispatch(setCurrentUser(currentUser));
+    navigate("/Kambaz/Account/Profile");
+  };
   return (
-    <Container fluid>
-      <h3>Sign up</h3>
-      <Form>
-        <Form.Group as={Row} className="mb-3">
-          <Col>
-            <Form.Control type="username" placeholder="username" />
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} className="mb-3">
-          <Col>
-            <Form.Control type="password" placeholder="password" />
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} className="mb-3">
-          <Col>
-            <Form.Control type="password" placeholder="verify password" />
-          </Col>
-        </Form.Group>
-      </Form>
-
-      <Link to="/Kambaz/Account/Profile" id="wd-profile-btn">
-        <Button variant="primary" size="lg" id="wd-profile-btn">
-          Sign up
-        </Button>
+    <div className="wd-signup-screen">
+      <h1>Sign up</h1>
+      <FormControl
+        value={user.username}
+        onChange={(e) => setUser({ ...user, username: e.target.value })}
+        className="wd-username b-2"
+        placeholder="username"
+      />
+      <FormControl
+        value={user.password}
+        onChange={(e) => setUser({ ...user, password: e.target.value })}
+        className="wd-password mb-2"
+        placeholder="password"
+        type="password"
+      />
+      <button
+        onClick={signup}
+        className="wd-signup-btn btn btn-primary mb-2 w-100"
+      >
+        Sign up
+      </button>
+      <br />
+      <Link to="/Kambaz/Account/Signin" className="wd-signin-link">
+        Sign in
       </Link>
-
-      <div>
-        <Link
-          to="/Kambaz/Account/Signin"
-          id="wd-signup-link"
-          className="list-group-item border-0 text-primary text-decoration-underline pt-3"
-        >
-          Signin
-        </Link>
-      </div>
-    </Container>
+    </div>
   );
 }

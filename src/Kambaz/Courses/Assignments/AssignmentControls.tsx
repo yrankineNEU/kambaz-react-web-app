@@ -1,6 +1,6 @@
-import { FaPlus } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
 import { Button, FormControl, InputGroup } from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 export default function AssignmentControls() {

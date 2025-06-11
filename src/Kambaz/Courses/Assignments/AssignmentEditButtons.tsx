@@ -1,6 +1,6 @@
+import { FaTrash } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "../Modules/GreenCheckmark";
-import { FaTrash } from "react-icons/fa6";
 
 export default function AssignmentEditButtons({
   assignmentId,
