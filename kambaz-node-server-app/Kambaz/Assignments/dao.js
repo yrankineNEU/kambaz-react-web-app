@@ -8,18 +8,15 @@ export function createAssignment(assignment) {
 }
 
 export const updateAssignment = (assignmentId, assignmentUpdates) => {
+  const { assignments } = Database;
   const assignmentIndex = assignments.findIndex((a) => a._id === assignmentId);
 
-  if (assignmentIndex === -1) {
-    throw new Error(`Assignment with ID ${assignmentId} not found`);
-  }
-
-  assignments[assignmentIndex] = {
-    ...assignments[assignmentIndex],
+  Database.assignments[assignmentIndex] = {
+    ...Database.assignments[assignmentIndex],
     ...assignmentUpdates,
   };
 
-  return assignments[assignmentIndex];
+  return Database.assignments[assignmentIndex];
 };
 
 export function findAssignmentsForCourse(courseId) {
