@@ -75,7 +75,15 @@ export default function TOC() {
           href="https://github.com/yrankineNEU/kambaz-react-web-app.git"
           target="_blank"
         >
-          My GitHub
+          My React GitHub
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link
+          href="https://github.com/yrankineNEU/kambaz-node-server-app"
+          target="_blank"
+        >
+          My Server GitHub
         </Nav.Link>
       </Nav.Item>
     </Nav>
