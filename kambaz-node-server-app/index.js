@@ -2,6 +2,7 @@ import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import session from "express-session";
+import Hello from "./Hello.js";
 import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 import ModuleRoutes from "./Kambaz/Modules/routes.js";
@@ -31,6 +32,7 @@ if (process.env.NODE_ENV !== "development") {
 app.use(session(sessionOptions));
 app.use(express.json());
 
+Hello(app);
 AssignmentRoutes(app);
 CourseRoutes(app);
 UserRoutes(app);
