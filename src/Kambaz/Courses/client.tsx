@@ -1,6 +1,7 @@
 import axios from "axios";
 
 axios.defaults.withCredentials = true;
+const axiosWithCredentials = axios.create({ withCredentials: true });
 const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER;
 const COURSES_API = `${REMOTE_SERVER}/api/courses`;
 
@@ -13,7 +14,7 @@ export const createModuleForCourse = async (courseId: string, module: any) => {
 };
 
 export const fetchAllCourses = async () => {
-  const { data } = await axios.get(COURSES_API);
+  const { data } = await axiosWithCredentials.get(COURSES_API);
   return data;
 };
 export const deleteCourse = async (id: string) => {

@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router";
 import Account from "./Account";
-import * as userClient from "./Account/client";
 import ProtectedRoute from "./Account/ProtectedRoute";
 import Session from "./Account/Session";
 import Courses from "./Courses";
+import * as courseClient from "./Courses/client";
 import Dashboard from "./Dashboard";
 import KambazNavigation from "./Navigation";
 import "./styles.css";
@@ -22,14 +22,13 @@ export default function Kambaz() {
 
     try {
       console.log("Fetching courses for user:", currentUser);
-      const courses = await userClient.findMyCourses();
+      const courses = await courseClient.fetchAllCourses();
       console.log("Received courses:", courses);
       setCourses(courses);
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
   };
-
   useEffect(() => {
     fetchCourses();
   }, [currentUser]);
