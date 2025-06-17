@@ -3,6 +3,13 @@ export const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER;
 export const USERS_API = `${REMOTE_SERVER}/api/users`;
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
+export const findCoursesForUser = async (userId: string) => {
+  const response = await axiosWithCredentials.get(
+    `${USERS_API}/${userId}/courses`
+  );
+  return response.data;
+};
+
 export const findAllUsers = async () => {
   const response = await axiosWithCredentials.get(USERS_API);
   return response.data;
@@ -50,16 +57,17 @@ export const updateUser = async (user: any) => {
 };
 
 export const findUsersByRole = async (role: string) => {
-  const response = await axios.get(`${USERS_API}?role=${role}`);
+  const response = await axiosWithCredentials.get(`${USERS_API}?role=${role}`); // Changed from axios to axiosWithCredentials
   return response.data;
 };
 
 export const findUsersByPartialName = async (name: string) => {
-  const response = await axios.get(`${USERS_API}?name=${name}`);
+  const response = await axiosWithCredentials.get(`${USERS_API}?name=${name}`); // Changed from axios to axiosWithCredentials
   return response.data;
 };
+
 export const findUserById = async (id: string) => {
-  const response = await axios.get(`${USERS_API}/${id}`);
+  const response = await axiosWithCredentials.get(`${USERS_API}/${id}`); // Changed from axios to axiosWithCredentials
   return response.data;
 };
 
@@ -70,5 +78,19 @@ export const deleteUser = async (userId: string) => {
 
 export const createUser = async (user: any) => {
   const response = await axios.post(`${USERS_API}`, user);
+  return response.data;
+};
+
+export const enrollIntoCourse = async (userId: string, courseId: string) => {
+  const response = await axiosWithCredentials.post(
+    `${USERS_API}/${userId}/courses/${courseId}`
+  );
+  return response.data;
+};
+
+export const unenrollFromCourse = async (userId: string, courseId: string) => {
+  const response = await axiosWithCredentials.delete(
+    `${USERS_API}/${userId}/courses/${courseId}`
+  );
   return response.data;
 };
