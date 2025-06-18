@@ -106,7 +106,7 @@ export default function Modules() {
                     className="wd-lesson p-3 ps-1"
                   >
                     <BsGripVertical className="me-2 fs-3" /> {lesson.name}
-                    <LessonControlButtons />
+                    {isFaculty && <LessonControlButtons />}
                   </ListGroup.Item>
                 ))}
               </ListGroup>
