@@ -95,13 +95,19 @@ export default function Assignments() {
                   {isFaculty && <GreenEditButton />}
                   <div>
                     <div className="fw-bold">
-                      <Link
-                        to={`/Kambaz/Courses/${cid}/Assignments/${assignment._id}`}
-                        id="wd-assignments-link"
-                        className="list-group-item border-0"
-                      >
-                        {assignment.title}
-                      </Link>
+                      {isFaculty ? (
+                        <Link
+                          to={`/Kambaz/Courses/${cid}/Assignments/${assignment._id}`}
+                          id="wd-assignments-link"
+                          className="list-group-item border-0"
+                        >
+                          {assignment.title}
+                        </Link>
+                      ) : (
+                        <span className="list-group-item border-0">
+                          {assignment.title}
+                        </span>
+                      )}
                     </div>
                     <div className="text-danger small">
                       Multiple Modules

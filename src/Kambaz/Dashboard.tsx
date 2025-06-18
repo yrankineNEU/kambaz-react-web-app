@@ -37,7 +37,6 @@ export default function Dashboard({
       </h1>
       <hr />
 
-      {/* ADDED: Course editing form for faculty to use course and setCourse props */}
       {currentUser?.role === "FACULTY" && (
         <div className="mb-4 p-3 border rounded">
           <h5>New Course</h5>
