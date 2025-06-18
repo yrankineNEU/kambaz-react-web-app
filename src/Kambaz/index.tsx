@@ -34,6 +34,23 @@ export default function Kambaz() {
     }
   };
 
+  const updateEnrollment = async (courseId: string, enrolled: boolean) => {
+    if (enrolled) {
+      await userClient.enrollIntoCourse(currentUser._id, courseId);
+    } else {
+      await userClient.unenrollFromCourse(currentUser._id, courseId);
+    }
+    setCourses(
+      courses.map((course) => {
+        if (course._id === courseId) {
+          return { ...course, enrolled: enrolled };
+        } else {
+          return course;
+        }
+      })
+    );
+  };
+
   const addNewCourse = async () => {
     const newCourse = await courseClient.createCourse(course);
     setCourses([...courses, newCourse]);
@@ -78,23 +95,6 @@ export default function Kambaz() {
     if (status) {
       setCourses(courses.map((c) => (c._id === course._id ? course : c)));
     }
-  };
-
-  const updateEnrollment = async (courseId: string, enrolled: boolean) => {
-    if (enrolled) {
-      await userClient.enrollIntoCourse(currentUser._id, courseId);
-    } else {
-      await userClient.unenrollFromCourse(currentUser._id, courseId);
-    }
-    setCourses(
-      courses.map((course) => {
-        if (course._id === courseId) {
-          return { ...course, enrolled: enrolled };
-        } else {
-          return course;
-        }
-      })
-    );
   };
 
   console.log("Current user:", currentUser);
