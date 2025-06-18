@@ -32,16 +32,6 @@ export default function Modules() {
     setModuleName("");
   };
 
-  const saveModule = async (module: any) => {
-    await modulesClient.updateModule(module);
-    dispatch(updateModule(module));
-  };
-
-  const removeModule = async (moduleId: string) => {
-    await modulesClient.deleteModule(moduleId);
-    dispatch(deleteModule(moduleId));
-  };
-
   const fetchModulesForCourse = async () => {
     const modules = await coursesClient.findModulesForCourse(cid!);
     dispatch(setModules(modules));
@@ -49,13 +39,6 @@ export default function Modules() {
   useEffect(() => {
     fetchModulesForCourse();
   }, [cid]);
-
-  const createModuleForCourse = async () => {
-    if (!cid) return;
-    const newModule = { name: moduleName, course: cid };
-    const module = await coursesClient.createModuleForCourse(cid, newModule);
-    dispatch(addModule(module));
-  };
 
   const updateModuleHandler = async (module: any) => {
     await modulesClient.updateModule(module);
