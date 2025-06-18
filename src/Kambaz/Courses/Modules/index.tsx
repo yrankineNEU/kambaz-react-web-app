@@ -18,11 +18,12 @@ import {
 } from "./reducer";
 
 export default function Modules() {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+
   const { cid } = useParams();
   const [moduleName, setModuleName] = useState("");
   const { modules } = useSelector((state: any) => state.modulesReducer);
   const dispatch = useDispatch();
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   const isFaculty = currentUser?.role === "FACULTY";
 
