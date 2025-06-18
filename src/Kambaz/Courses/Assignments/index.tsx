@@ -10,6 +10,9 @@ import GreenEditButton from "./GreenEditButton";
 import { addAssignment, deleteAssignment } from "./reducer";
 
 export default function Assignments() {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const isFaculty = currentUser?.role === "FACULTY";
+
   const { cid } = useParams();
   const dispatch = useDispatch();
   const isMountedRef = useRef(true);
@@ -70,7 +73,7 @@ export default function Assignments() {
 
   return (
     <div>
-      <AssignmentControls />
+      {isFaculty && <AssignmentControls />}
       <br />
       <br />
       <br />
@@ -89,7 +92,7 @@ export default function Assignments() {
                   className="wd-lesson p-3 ps-1"
                 >
                   <BsGripVertical className="me-2 fs-3" />
-                  <GreenEditButton />
+                  {isFaculty && <GreenEditButton />}
                   <div>
                     <div className="fw-bold">
                       <Link
@@ -108,10 +111,12 @@ export default function Assignments() {
                       </span>
                     </div>
                   </div>
-                  <AssignmentEditButtons
-                    assignmentId={assignment._id}
-                    deleteAssignment={handleDeleteAssignment}
-                  />
+                  {isFaculty && (
+                    <AssignmentEditButtons
+                      assignmentId={assignment._id}
+                      deleteAssignment={handleDeleteAssignment}
+                    />
+                  )}
                 </ListGroup.Item>
               ))}
           </ListGroup>
