@@ -3,7 +3,6 @@ import model from "./model.js";
 
 export const createUser = (user) => {
   const newUser = { ...user, _id: uuidv4() };
-  users = [...users, newUser];
   return model.create(newUser);
 };
 
