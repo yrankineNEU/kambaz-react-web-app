@@ -1,21 +1,50 @@
+import { useEffect } from "react";
 import { ListGroup } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router";
+import * as client from "./client";
 import QuizControls from "./QuizControls";
 import QuizEditButtons from "./QuizEditButtons";
+import { addQuiz, deleteQuiz } from "./reducer";
 
 export default function Quizzes() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const isFaculty = currentUser?.role === "FACULTY";
   const { cid } = useParams();
 
-  // Temporary empty array until we add Redux/API calls
-  const quizzes: any[] = [];
+  const dispatch = useDispatch();
+
+  const { quizzes } = useSelector((state: any) => state.quizzesReducer);
+
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      try {
+        if (!cid) return;
+        const serverQuizzes = await client.findQuizzesForCourse(cid);
+        serverQuizzes.forEach((quiz: any) => {
+          dispatch(addQuiz(quiz));
+        });
+      } catch (error) {
+        console.error("Error fetching quizzes:", error);
+      }
+    };
+
+    fetchQuizzes();
+  }, [cid, dispatch]);
 
   // Temporary handler - we'll implement this later
-  const handleDeleteQuiz = (quizId: string) => {
-    console.log("Delete quiz:", quizId);
+  const handleDeleteQuiz = async (quizId: string) => {
+    try {
+      // Delete from server
+      await client.deleteQuiz(quizId);
+
+      // Delete from Redux store
+      dispatch(deleteQuiz(quizId));
+    } catch (error) {
+      console.error("Error deleting assignment:", error);
+      alert("Failed to delete assignment. Please try again.");
+    }
   };
 
   return (
@@ -31,7 +60,7 @@ export default function Quizzes() {
             <BsGripVertical className="me-2 fs-3" /> Assignment Quizzes
           </div>
           <ListGroup className="wd-lessons rounded-0">
-            {quizzes.length === 0 ? (
+            {quizzes.filter((quiz: any) => quiz.course === cid).length === 0 ? (
               <ListGroup.Item className="text-center py-4">
                 <p className="mb-0">No quizzes available</p>
                 {isFaculty && (

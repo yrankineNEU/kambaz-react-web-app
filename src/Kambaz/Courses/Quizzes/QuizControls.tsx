@@ -2,13 +2,18 @@ import { Button, FormControl, InputGroup } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import * as client from "./client";
 
 export default function QuizControls() {
   const navigate = useNavigate();
+  const { cid } = useParams();
 
-  const handleAddQuiz = () => {
-    navigate("Editor");
+  const handleAddQuiz = async () => {
+    const newQuiz = await client.createQuizForCourse(cid!, {
+      title: "New Quiz",
+    });
+    navigate(`${newQuiz._id}`);
   };
 
   return (

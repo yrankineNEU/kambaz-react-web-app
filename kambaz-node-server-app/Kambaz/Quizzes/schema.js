@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const quizSchema = new mongoose.Schema(
   {
+    _id: String,
     title: { type: String, default: "New Quiz" },
     description: String,
     course: { type: String, ref: "CourseModel" },

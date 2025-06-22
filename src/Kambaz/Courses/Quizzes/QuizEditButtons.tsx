@@ -1,5 +1,6 @@
 import { Dropdown } from "react-bootstrap";
 import { IoEllipsisVertical } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 
 export default function QuizEditButtons({
@@ -13,6 +14,8 @@ export default function QuizEditButtons({
   deleteQuiz: (quizId: string) => void;
   togglePublish: (quizId: string, currentStatus: boolean) => void;
 }) {
+  const navigate = useNavigate();
+
   return (
     <div className="float-end">
       <span
@@ -35,7 +38,9 @@ export default function QuizEditButtons({
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          <Dropdown.Item onClick={() => {}}>Edit</Dropdown.Item>
+          <Dropdown.Item onClick={() => navigate(`${quizId}`)}>
+            Edit
+          </Dropdown.Item>
           <Dropdown.Item
             onClick={() => deleteQuiz(quizId)}
             className="text-danger"
