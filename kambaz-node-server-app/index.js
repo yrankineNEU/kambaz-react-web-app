@@ -38,6 +38,7 @@ if (process.env.NODE_ENV !== "development") {
 app.use(session(sessionOptions));
 app.use(express.json());
 
+QuizRoutes(app);
 AssignmentRoutes(app);
 CourseRoutes(app);
 UserRoutes(app);
