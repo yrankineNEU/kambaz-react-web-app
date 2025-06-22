@@ -88,70 +88,72 @@ export default function Dashboard({
 
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
-          {courses.map((course) => (
-            <div
-              key={course._id}
-              className="wd-dashboard-course col"
-              style={{ width: "300px" }}
-            >
-              <div className="card rounded-3 overflow-hidden">
-                <div className="card-body">
-                  <h5 className="wd-dashboard-course-title card-title">
-                    {enrolling && (
-                      <button
-                        onClick={(event) => {
-                          event.preventDefault();
-                          updateEnrollment(course._id, !course.enrolled);
-                        }}
-                        className={`btn ${
-                          course.enrolled ? "btn-danger" : "btn-success"
-                        } float-end`}
-                      >
-                        {course.enrolled ? "Unenroll" : "Enroll"}
-                      </button>
+          {courses
+            .filter((course) => course !== null)
+            .map((course) => (
+              <div
+                key={course._id}
+                className="wd-dashboard-course col"
+                style={{ width: "300px" }}
+              >
+                <div className="card rounded-3 overflow-hidden">
+                  <div className="card-body">
+                    <h5 className="wd-dashboard-course-title card-title">
+                      {enrolling && (
+                        <button
+                          onClick={(event) => {
+                            event.preventDefault();
+                            updateEnrollment(course._id, !course.enrolled);
+                          }}
+                          className={`btn ${
+                            course.enrolled ? "btn-danger" : "btn-success"
+                          } float-end`}
+                        >
+                          {course.enrolled ? "Unenroll" : "Enroll"}
+                        </button>
+                      )}
+                      {course.name}
+                    </h5>
+                    <p
+                      className="wd-dashboard-course-title card-text overflow-y-hidden"
+                      style={{ maxHeight: 100 }}
+                    >
+                      {course.description}
+                    </p>
+                    <a
+                      href={`#/Kambaz/Courses/${course._id}/Home`}
+                      className="btn btn-primary"
+                    >
+                      Go
+                    </a>
+                    {currentUser?.role === "FACULTY" && (
+                      <>
+                        <button
+                          onClick={(event) => {
+                            event.preventDefault();
+                            deleteCourse(course._id);
+                          }}
+                          className="btn btn-danger float-end"
+                          id="wd-delete-course-click"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          id="wd-edit-course-click"
+                          className="btn btn-warning me-2 float-end"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            setCourse(course);
+                          }}
+                        >
+                          Edit
+                        </button>
+                      </>
                     )}
-                    {course.name}
-                  </h5>
-                  <p
-                    className="wd-dashboard-course-title card-text overflow-y-hidden"
-                    style={{ maxHeight: 100 }}
-                  >
-                    {course.description}
-                  </p>
-                  <a
-                    href={`#/Kambaz/Courses/${course._id}/Home`}
-                    className="btn btn-primary"
-                  >
-                    Go
-                  </a>
-                  {currentUser?.role === "FACULTY" && (
-                    <>
-                      <button
-                        onClick={(event) => {
-                          event.preventDefault();
-                          deleteCourse(course._id);
-                        }}
-                        className="btn btn-danger float-end"
-                        id="wd-delete-course-click"
-                      >
-                        Delete
-                      </button>
-                      <button
-                        id="wd-edit-course-click"
-                        className="btn btn-warning me-2 float-end"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setCourse(course);
-                        }}
-                      >
-                        Edit
-                      </button>
-                    </>
-                  )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>
