@@ -28,7 +28,7 @@ export default function Quizzes() {
       <ListGroup className="rounded-0" id="wd-quizzes">
         <ListGroup.Item className="wd-quiz p-0 mb-5 fs-5 border-gray">
           <div className="wd-title p-3 ps-2 bg-secondary">
-            <BsGripVertical className="me-2 fs-3" /> QUIZZES
+            <BsGripVertical className="me-2 fs-3" /> Assignment Quizzes
           </div>
           <ListGroup className="wd-lessons rounded-0">
             {quizzes.length === 0 ? (
