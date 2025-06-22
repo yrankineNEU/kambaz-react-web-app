@@ -65,10 +65,15 @@ export default function Kambaz() {
 
   const fetchCourses = async () => {
     try {
+      console.log("FETCHING ALL COURSES...");
       const allCourses = await courseClient.fetchAllCourses();
+      console.log("ALL COURSES FROM API:", allCourses.length, allCourses);
+
       const enrolledCourses = await userClient.findCoursesForUser(
         currentUser._id
       );
+      console.log("USER ENROLLED:", enrolledCourses.length, enrolledCourses);
+
       const courses = allCourses.map((course: any) => {
         if (enrolledCourses.find((c: any) => c._id === course._id)) {
           return { ...course, enrolled: true };
@@ -76,6 +81,7 @@ export default function Kambaz() {
           return course;
         }
       });
+      console.log("fINAL COURSES:", courses.length, courses);
       setCourses(courses);
     } catch (error) {
       console.error(error);
