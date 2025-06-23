@@ -13,6 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import * as client from "./client";
+import QuestionEditor from "./QuestionEditor";
 import { addQuiz, updateQuiz } from "./reducer";
 
 export default function QuizEditor() {
@@ -166,7 +167,6 @@ export default function QuizEditor() {
 
   // Save and publish
   const handleSaveAndPublish = async () => {
-    // Make sure we have required fields
     if (!quiz.title.trim()) {
       alert("Please enter a quiz title");
       return;
@@ -620,12 +620,7 @@ export default function QuizEditor() {
               )}
 
               {activeTab === "questions" && (
-                <div className="text-center py-5">
-                  <h4>Questions Tab</h4>
-                  <p className="text-muted">
-                    Questions editor will be implemented next...
-                  </p>
-                </div>
+                <QuestionEditor quiz={quiz} onUpdateQuiz={setQuiz} />
               )}
             </Card.Body>
           </Card>
