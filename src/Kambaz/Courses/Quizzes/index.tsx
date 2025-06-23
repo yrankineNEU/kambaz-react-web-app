@@ -21,6 +21,7 @@ export default function Quizzes() {
       try {
         if (!cid) return;
         const serverQuizzes = await client.findQuizzesForCourse(cid);
+
         serverQuizzes.forEach((quiz: any) => {
           dispatch(addQuiz(quiz));
         });
@@ -32,7 +33,22 @@ export default function Quizzes() {
     fetchQuizzes();
   }, [cid, dispatch]);
 
-  // Temporary handler - we'll implement this later
+  // debugging
+  useEffect(() => {
+    console.log("All quizzes in Redux:", quizzes);
+    console.log(
+      "Quizzes for this course:",
+      quizzes.filter((quiz: any) => quiz.course === cid)
+    );
+
+    quizzes.forEach((quiz: any, index: number) => {
+      console.log(`Quiz ${index}:`, quiz);
+      if (quiz.questions && quiz.questions.length > 0) {
+        console.log(`Quiz ${index} questions:`, quiz.questions);
+      }
+    });
+  }, [quizzes, cid]);
+
   const handleDeleteQuiz = async (quizId: string) => {
     try {
       // Delete from server
@@ -94,8 +110,8 @@ export default function Quizzes() {
                         Multiple Modules
                         <span className="text-body ms-1">
                           | Not available until {quiz.availableDate} | Due:
-                          {quiz.dueDate} | {quiz.points} pts | {quiz.questions}{" "}
-                          questions
+                          {quiz.dueDate} | {quiz.points} pts |
+                          {quiz.questions?.length || 0} questions
                         </span>
                       </div>
                     </div>
