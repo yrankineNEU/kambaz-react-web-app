@@ -37,6 +37,32 @@ export default function TrueFalse({
     setEditingQuestion({ ...editingQuestion, [field]: value });
   };
 
+  const handleTypeChange = (newType: string) => {
+    let updatedQuestion = { ...editingQuestion, type: newType };
+
+    // Convert question data to match new type
+    if (newType === "multiple-choice") {
+      updatedQuestion = {
+        ...updatedQuestion,
+        options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+        correctAnswer: 0,
+      };
+    } else if (newType === "true-false") {
+      updatedQuestion = {
+        ...updatedQuestion,
+        correctAnswer: true,
+      };
+    } else if (newType === "fill-blank") {
+      updatedQuestion = {
+        ...updatedQuestion,
+        correctAnswer: [],
+      };
+    }
+
+    setEditingQuestion(updatedQuestion);
+    onUpdateQuestion(questionIndex, updatedQuestion);
+  };
+
   return (
     <Card className="mb-3">
       <Card.Header className="d-flex justify-content-between align-items-center">
@@ -100,7 +126,7 @@ export default function TrueFalse({
               <Form.Label>Question Type</Form.Label>
               <FormSelect
                 value={editingQuestion.type}
-                onChange={(e) => handleFieldChange("type", e.target.value)}
+                onChange={(e) => handleTypeChange(e.target.value)}
               >
                 <option value="multiple-choice">Multiple Choice</option>
                 <option value="true-false">True/False</option>
