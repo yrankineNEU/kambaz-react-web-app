@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Card, Form, FormCheck } from "react-bootstrap";
+import { Button, Card, Form, FormCheck, FormSelect } from "react-bootstrap";
 
 export default function TrueFalse({
   question,
@@ -93,6 +93,19 @@ export default function TrueFalse({
                 onChange={(e) => handleFieldChange("title", e.target.value)}
                 placeholder="Enter question title"
               />
+            </Form.Group>
+
+            {/* Question Type */}
+            <Form.Group className="mb-3">
+              <Form.Label>Question Type</Form.Label>
+              <FormSelect
+                value={editingQuestion.type}
+                onChange={(e) => handleFieldChange("type", e.target.value)}
+              >
+                <option value="multiple-choice">Multiple Choice</option>
+                <option value="true-false">True/False</option>
+                <option value="fill-blank">Fill in the Blank</option>
+              </FormSelect>
             </Form.Group>
 
             {/* Points */}

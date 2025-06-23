@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Card, Form, FormCheck, FormSelect } from "react-bootstrap";
 
-export default function FillBlank({
+export default function MultipleChoiceEditor({
   question,
   questionIndex,
   onUpdateQuestion,
