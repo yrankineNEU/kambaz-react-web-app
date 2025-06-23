@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Card, Form, FormCheck, FormSelect } from "react-bootstrap";
 
-export default function MultipleChoiceEditor({
+export default function FillBlank({
   question,
   questionIndex,
   onUpdateQuestion,
@@ -33,78 +33,51 @@ export default function MultipleChoiceEditor({
     setIsEditing(true);
   };
 
-  const handleAddOption = () => {
-    const newOptions = [
-      ...editingQuestion.options,
-      `Option ${editingQuestion.options.length + 1}`,
-    ];
-    setEditingQuestion({ ...editingQuestion, options: newOptions });
-  };
-
-  const handleRemoveOption = (optionIndex: number) => {
-    if (editingQuestion.options.length > 2) {
-      const newOptions = editingQuestion.options.filter(
-        (_: any, index: number) => index !== optionIndex
-      );
-      let newCorrectAnswer = editingQuestion.correctAnswer;
-
-      // Adjust correct answer if needed
-      if (editingQuestion.correctAnswer >= optionIndex) {
-        newCorrectAnswer = Math.max(0, editingQuestion.correctAnswer - 1);
-      }
-
-      setEditingQuestion({
-        ...editingQuestion,
-        options: newOptions,
-        correctAnswer: newCorrectAnswer,
-      });
-    }
-  };
-
-  const handleOptionChange = (optionIndex: number, value: string) => {
-    const newOptions = editingQuestion.options.map(
-      (option: string, index: number) =>
-        index === optionIndex ? value : option
-    );
-    setEditingQuestion({ ...editingQuestion, options: newOptions });
-  };
-
   const handleFieldChange = (field: string, value: any) => {
     setEditingQuestion({ ...editingQuestion, [field]: value });
   };
 
-  const handleTypeChange = (newType: string) => {
-    let updatedQuestion = { ...editingQuestion, type: newType };
-
-    // Convert question data to match new type
-    if (newType === "multiple-choice") {
-      updatedQuestion = {
-        ...updatedQuestion,
-        options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-        correctAnswer: 0,
-      };
-    } else if (newType === "true-false") {
-      updatedQuestion = {
-        ...updatedQuestion,
-        correctAnswer: true,
-      };
-    } else if (newType === "fill-blank") {
-      updatedQuestion = {
-        ...updatedQuestion,
-        correctAnswer: [],
-      };
-    }
-
-    setEditingQuestion(updatedQuestion);
-    onUpdateQuestion(questionIndex, updatedQuestion);
+  const handleAddAnswer = () => {
+    const currentAnswers = Array.isArray(editingQuestion.correctAnswer)
+      ? editingQuestion.correctAnswer
+      : [];
+    const newAnswers = [...currentAnswers, ""];
+    setEditingQuestion({ ...editingQuestion, correctAnswer: newAnswers });
   };
+
+  const handleRemoveAnswer = (answerIndex: number) => {
+    const currentAnswers = Array.isArray(editingQuestion.correctAnswer)
+      ? editingQuestion.correctAnswer
+      : [];
+    if (currentAnswers.length > 1) {
+      const newAnswers = currentAnswers.filter(
+        (_: any, index: number) => index !== answerIndex
+      );
+      setEditingQuestion({ ...editingQuestion, correctAnswer: newAnswers });
+    }
+  };
+
+  const handleAnswerChange = (answerIndex: number, value: string) => {
+    const currentAnswers = Array.isArray(editingQuestion.correctAnswer)
+      ? editingQuestion.correctAnswer
+      : [];
+    const newAnswers = currentAnswers.map((answer: string, index: number) =>
+      index === answerIndex ? value : answer
+    );
+    setEditingQuestion({ ...editingQuestion, correctAnswer: newAnswers });
+  };
+
+  // Ensure we have at least one answer
+  const answers = Array.isArray(editingQuestion.correctAnswer)
+    ? editingQuestion.correctAnswer
+    : [""];
 
   return (
     <Card className="mb-3">
       <Card.Header className="d-flex justify-content-between align-items-center">
         <div>
           <span className="fw-bold">Question {questionIndex + 1}</span>
-          <span className="text-muted ms-2">Multiple Choice</span>
+          <span className="text-muted ms-2">Fill in the Blank</span>
         </div>
         <div>
           {isEditing ? (
@@ -162,7 +135,7 @@ export default function MultipleChoiceEditor({
               <Form.Label>Question Type</Form.Label>
               <FormSelect
                 value={editingQuestion.type}
-                onChange={(e) => handleTypeChange(e.target.value)}
+                onChange={(e) => handleFieldChange("type", e.target.value)}
               >
                 <option value="multiple-choice">Multiple Choice</option>
                 <option value="true-false">True/False</option>
@@ -192,61 +165,72 @@ export default function MultipleChoiceEditor({
                 rows={3}
                 value={editingQuestion.question}
                 onChange={(e) => handleFieldChange("question", e.target.value)}
-                placeholder="Enter your question text here..."
+                placeholder="Enter your fill-in-the-blank question here. Use _____ for the blank."
               />
+              <Form.Text className="text-muted">
+                Use underscores (____) to indicate where students should fill in
+                their answer
+              </Form.Text>
             </Form.Group>
 
-            {/* Answer Options */}
+            {/* Possible Correct Answers */}
             <Form.Group className="mb-3">
-              <Form.Label>Answers</Form.Label>
+              <Form.Label>Possible Correct Answers</Form.Label>
               <div className="border rounded p-3 bg-light">
-                {editingQuestion.options.map(
-                  (option: string, optionIndex: number) => (
-                    <div
-                      key={optionIndex}
-                      className="d-flex align-items-center mb-2"
-                    >
-                      <FormCheck
-                        type="radio"
-                        name={`correct-${questionIndex}`}
-                        checked={editingQuestion.correctAnswer === optionIndex}
-                        onChange={() =>
-                          handleFieldChange("correctAnswer", optionIndex)
-                        }
-                        className="me-2"
-                        title="Mark as correct answer"
-                      />
-                      <Form.Control
-                        type="text"
-                        value={option}
-                        onChange={(e) =>
-                          handleOptionChange(optionIndex, e.target.value)
-                        }
-                        className="me-2"
-                        placeholder={`Option ${optionIndex + 1}`}
-                      />
-                      {editingQuestion.options.length > 2 && (
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => handleRemoveOption(optionIndex)}
-                          title="Remove this option"
-                        >
-                          Remove
-                        </Button>
-                      )}
-                    </div>
-                  )
-                )}
+                {answers.map((answer: string, answerIndex: number) => (
+                  <div
+                    key={answerIndex}
+                    className="d-flex align-items-center mb-2"
+                  >
+                    <Form.Control
+                      type="text"
+                      value={answer}
+                      onChange={(e) =>
+                        handleAnswerChange(answerIndex, e.target.value)
+                      }
+                      className="me-2"
+                      placeholder={`Possible answer ${answerIndex + 1}`}
+                    />
+                    {answers.length > 1 && (
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => handleRemoveAnswer(answerIndex)}
+                        title="Remove this answer"
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                ))}
                 <Button
                   variant="outline-primary"
                   size="sm"
-                  onClick={handleAddOption}
+                  onClick={handleAddAnswer}
                   className="mt-2"
                 >
                   + Add Another Answer
                 </Button>
               </div>
+              <Form.Text className="text-muted">
+                Add all possible correct answers. Matching can be case-sensitive
+                or case-insensitive.
+              </Form.Text>
+            </Form.Group>
+
+            {/* Case Sensitivity Option */}
+            <Form.Group className="mb-3">
+              <FormCheck
+                type="checkbox"
+                label="Case insensitive matching"
+                checked={editingQuestion.caseInsensitive || false}
+                onChange={(e) =>
+                  handleFieldChange("caseInsensitive", e.target.checked)
+                }
+              />
+              <Form.Text className="text-muted">
+                If checked, "answer" will match "Answer", "ANSWER", etc.
+              </Form.Text>
             </Form.Group>
           </Form>
         ) : (
@@ -264,31 +248,46 @@ export default function MultipleChoiceEditor({
             </p>
 
             <div className="ms-3">
-              {question.options &&
-                question.options.map((option: string, index: number) => (
-                  <div key={index} className="form-check mb-2">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      disabled
-                      checked={question.correctAnswer === index}
-                    />
-                    <label
-                      className={`form-check-label ${
-                        question.correctAnswer === index
-                          ? "fw-bold text-success"
-                          : ""
-                      }`}
-                    >
-                      {option}
-                    </label>
-                    {question.correctAnswer === index && (
-                      <span className="text-success ms-2">
-                        ✓ Correct Answer
-                      </span>
-                    )}
-                  </div>
-                ))}
+              <div className="border rounded p-3 bg-light mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Student would type their answer here..."
+                  disabled
+                  className="mb-2"
+                />
+              </div>
+
+              <div className="mb-2">
+                <small className="text-muted fw-bold">Accepted Answers:</small>
+                <div className="mt-1">
+                  {Array.isArray(question.correctAnswer) &&
+                  question.correctAnswer.length > 0 ? (
+                    question.correctAnswer
+                      .filter((answer: string) => answer.trim() !== "")
+                      .map((answer: string, index: number) => (
+                        <span
+                          key={index}
+                          className="badge bg-success me-1 mb-1"
+                        >
+                          {answer}
+                        </span>
+                      ))
+                  ) : (
+                    <span className="text-muted">
+                      No correct answers defined
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {question.caseInsensitive && (
+                <div>
+                  <small className="text-info">
+                    <i className="bi bi-info-circle"></i> Case insensitive
+                    matching enabled
+                  </small>
+                </div>
+              )}
             </div>
           </div>
         )}
