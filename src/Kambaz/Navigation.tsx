@@ -20,7 +20,7 @@ export default function KambazNavigation() {
     },
     { label: "Calendar", path: "/Kambaz/Calendar", icon: IoCalendarOutline },
     { label: "Inbox", path: "/Kambaz/Inbox", icon: FaInbox },
-    { label: "Labs", path: "/Labs", icon: LiaCogSolid },
+    { label: "Landing Page", path: "/Labs", icon: LiaCogSolid },
   ];
 
   return (
