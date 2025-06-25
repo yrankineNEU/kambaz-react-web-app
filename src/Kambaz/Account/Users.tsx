@@ -57,7 +57,7 @@ export default function Users() {
       >
         <FaPlus className="me-2" />
         Users
-      </button>{" "}
+      </button>
       <FormControl
         onChange={(e) => filterUsersByName(e.target.value)}
         placeholder="Search people"
