@@ -8,7 +8,10 @@ import * as client from "../../Account/client";
 export default function PeopleDetails() {
   const { uid } = useParams();
   const [user, setUser] = useState<any>({});
+  const [name, setName] = useState("");
+  const [editing, setEditing] = useState(false);
   const navigate = useNavigate();
+
   const deleteUser = async (uid: string) => {
     await client.deleteUser(uid);
     navigate(-1);
@@ -19,13 +22,7 @@ export default function PeopleDetails() {
     const user = await client.findUserById(uid);
     setUser(user);
   };
-  useEffect(() => {
-    if (uid) fetchUser();
-  }, [uid]);
-  if (!uid) return null;
 
-  const [name, setName] = useState("");
-  const [editing, setEditing] = useState(false);
   const saveUser = async () => {
     const [firstName, lastName] = name.split(" ");
     const updatedUser = { ...user, firstName, lastName };
@@ -34,6 +31,11 @@ export default function PeopleDetails() {
     setEditing(false);
     navigate(-1);
   };
+
+  useEffect(() => {
+    if (uid) fetchUser();
+  }, [uid]);
+  if (!uid) return null;
 
   return (
     <div className="wd-people-details position-fixed top-0 end-0 bottom-0 bg-white p-4 shadow w-25">
